@@ -10,8 +10,7 @@ const config: StorybookConfig = {
   ],
   framework: "@storybook/react-vite",
   viteFinal: async (config) => {
-    config.base =
-      process.env.NODE_ENV === "production" ? "/components-library/" : "/";
+    config.base = process.env.STORYBOOK_BASE_PATH || "/";
     return config;
   },
 };

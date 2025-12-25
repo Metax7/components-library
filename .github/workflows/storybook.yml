@@ -25,6 +25,8 @@ jobs:
 
       - name: Build Storybook
         run: bun run build-storybook
+        env:
+          STORYBOOK_BASE_PATH: /components-library/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
