@@ -1,0 +1,32 @@
+{
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.linkedEditing": false,
+  "editor.pasteAs.preferences": ["text.updateImports"],
+  "editor.rulers": [80, 120],
+  "editor.semanticHighlighting.enabled": true,
+  "editor.stickyScroll.enabled": true,
+  "editor.tabSize": 2,
+  "eslint.enable": true,
+  "eslint.validate": ["javascript"],
+  "files.associations": {
+    ".env.local": "env",
+    ".env.template": "env"
+  },
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    ".next/**": true,
+    "node_modules/**": true,
+    "storybook-static/**": true
+  },
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true
+}
