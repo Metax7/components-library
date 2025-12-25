@@ -9,6 +9,11 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
   ],
   framework: "@storybook/react-vite",
+  viteFinal: async (config) => {
+    config.base =
+      process.env.NODE_ENV === "production" ? "/components-library/" : "/";
+    return config;
+  },
 };
 
 export default config;
