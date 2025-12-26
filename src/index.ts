@@ -1,3 +1,3 @@
 export * from "./providers/LibraryProvider";
 export * from "./providers/types";
-export * from "./config/createLibConfig";
+export * from "./config/defineConfig";
