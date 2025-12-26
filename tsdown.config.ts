@@ -1,10 +1,11 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["./src/index.ts"],
+  entry: ["./src/index.ts", "./src/components/*.tsx", "./src/providers/*.tsx"],
   format: ["esm"],
   dts: true,
   clean: true,
+  unbundle: true,
   external: [
     "react",
     "react-dom",
