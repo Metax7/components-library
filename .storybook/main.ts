@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -6,11 +7,16 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
     "@storybook/addon-vitest",
     "@storybook/addon-a11y",
-    "@storybook/addon-docs",
   ],
-  framework: "@storybook/react-vite",
-  viteFinal: async (config) => {
+  framework: {
+    name: "@storybook/react-vite",
+    options: {},
+  },
+  async viteFinal(config) {
     config.base = process.env.STORYBOOK_BASE_PATH || "/";
+
+    config.plugins?.push(tsconfigPaths());
+
     return config;
   },
 };
