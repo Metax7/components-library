@@ -1,6 +1,7 @@
 {
-  "name": "components-library",
+  "name": "components-library-mtx",
   "version": "0.0.1",
+  "description": "A premium components library built with React, Tailwind CSS, and Framer Motion.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -15,10 +16,18 @@
       "import": "./dist/components/Button.js"
     },
     "./utils": {
+      "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/LibraryProvider.d.ts",
+      "import": "./dist/providers/LibraryProvider.js"
     },
     "./style.css": "./dist/index.css"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "dist"
   ],
@@ -28,6 +37,7 @@
     "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
     "prepare": "bun run build",
+    "prepublishOnly": "bun run build",
     "test": "bun test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -67,5 +77,22 @@
   },
   "engines": {
     "bun": "^1.3"
-  }
+  },
+  "license": "MIT",
+  "author": "Metax",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Metax7/components-library.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Metax7/components-library/issues"
+  },
+  "homepage": "https://github.com/Metax7/components-library#readme",
+  "keywords": [
+    "react",
+    "components",
+    "ui-library",
+    "tailwind",
+    "framer-motion"
+  ]
 }
