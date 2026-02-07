@@ -23,9 +23,9 @@
     "dist"
   ],
   "scripts": {
-    "dev": "bunx tsdown --watch",
-    "build:js": "bunx tsdown",
-    "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
+    "dev": "bun --bun tsdown --watch",
+    "build:js": "bun --bun tsdown",
+    "build:css": "bun tailwindcss -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
     "prepare": "bun run build",
     "test": "bun test",
@@ -51,8 +51,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "storybook": "^10.1.10",
-    "tailwindcss": "^4.0.0",
-    "tsdown": "^0.18.3",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
   },
@@ -63,7 +61,10 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/cli": "^4.0.0",
+    "tsdown": "^0.18.3"
   },
   "engines": {
     "bun": "^1.3"
