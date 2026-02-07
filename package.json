@@ -5,19 +5,31 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./button": {
       "types": "./dist/components/Button.d.ts",
-      "import": "./dist/components/Button.js"
+      "import": "./dist/components/Button.js",
+      "default": "./dist/components/Button.js"
     },
     "./utils": {
-      "import": "./dist/utils/index.js"
+      "import": "./dist/utils/index.js",
+      "default": "./dist/utils/index.js"
     },
     "./style.css": "./dist/index.css"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*",
+        "dist/index.d.ts"
+      ]
+    }
   },
   "files": [
     "dist"
