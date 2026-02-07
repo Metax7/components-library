@@ -27,6 +27,7 @@
     "build:js": "tsdown",
     "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
+    "prepare": "bun run build",
     "test": "bun test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
