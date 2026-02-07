@@ -23,8 +23,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "tsdown --watch",
-    "build:js": "tsdown",
+    "dev": "bunx tsdown --watch",
+    "build:js": "bunx tsdown",
     "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
     "prepare": "bun run build",
