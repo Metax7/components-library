@@ -39,7 +39,7 @@
     "build:js": "bun --bun tsdown",
     "build:css": "bun tailwindcss -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
-    "prepare": "bun run build",
+    "prepare": "bun install && bun run build",
     "test": "bun test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -66,7 +66,10 @@
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "typescript": ">= 5.0.0",
+    "@types/react": ">= 18.0.0",
+    "@types/react-dom": ">= 18.0.0"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
