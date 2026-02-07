@@ -5,41 +5,29 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     },
     "./button": {
       "types": "./dist/components/Button.d.ts",
-      "import": "./dist/components/Button.js",
-      "default": "./dist/components/Button.js"
+      "import": "./dist/components/Button.js"
     },
     "./utils": {
-      "import": "./dist/utils/index.js",
-      "default": "./dist/utils/index.js"
+      "import": "./dist/utils/index.js"
     },
     "./style.css": "./dist/index.css"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*",
-        "dist/index.d.ts"
-      ]
-    }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "bun --bun tsdown --watch",
-    "build:js": "bun --bun tsdown",
-    "build:css": "bun tailwindcss -i ./src/index.css -o ./dist/index.css --minify",
+    "dev": "tsdown --watch",
+    "build:js": "tsdown",
+    "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
     "build": "bun run build:js && bun run build:css",
-    "prepare": "bun install && bun run build",
+    "prepare": "bun run build",
     "test": "bun test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -53,6 +41,8 @@
     "@storybook/react-vite": "^10.1.10",
     "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/vite": "^4.1.18",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/coverage-v8": "^4.0.16",
     "chromatic": "^13.3.4",
@@ -61,26 +51,19 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "storybook": "^10.1.10",
+    "tailwindcss": "^4.0.0",
+    "tsdown": "^0.18.3",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "typescript": ">= 5.0.0",
-    "@types/react": ">= 18.0.0",
-    "@types/react-dom": ">= 18.0.0"
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/cli": "^4.0.0",
-    "tsdown": "^0.18.3",
-    "typescript": "^5.7.3",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "tailwind-merge": "^3.4.0"
   },
   "engines": {
     "bun": "^1.3"
