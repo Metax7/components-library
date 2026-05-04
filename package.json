@@ -23,6 +23,22 @@
       "types": "./dist/providers/LibraryProvider.d.ts",
       "import": "./dist/providers/LibraryProvider.js"
     },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js"
+    },
+    "./actions": {
+      "types": "./dist/actions/index.d.ts",
+      "import": "./dist/actions/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js"
+    },
+    "./dal": {
+      "types": "./dist/dal/index.d.ts",
+      "import": "./dist/dal/index.js"
+    },
     "./style.css": "./dist/index.css"
   },
   "sideEffects": [
@@ -71,9 +87,16 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.100.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.4.0"
+    "ky": "^2.0.2",
+    "nuqs": "^2.8.9",
+    "react-hook-form": "^7.75.0",
+    "tailwind-merge": "^3.4.0",
+    "yup": "^1.7.1",
+    "zod": "^4.4.3"
   },
   "engines": {
     "bun": "^1.3"
