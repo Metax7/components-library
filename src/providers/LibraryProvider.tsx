@@ -96,7 +96,7 @@ export const LibraryProvider = ({
       <QueryClientProvider client={queryClient}>
         <Toaster richColors />
         {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        {config.enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
     </LibraryContext.Provider>
   );

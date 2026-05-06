@@ -2,6 +2,7 @@ export interface LibraryConfig {
   theme?: "light" | "dark";
   rippleEffect?: boolean;
   components?: Partial<Components>;
+  enableDevtools?: boolean;
   router: Router;
 }
 
