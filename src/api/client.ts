@@ -1,5 +1,5 @@
-import ky from "ky"
-import type { Options } from "ky"
+import ky from "ky";
+import type { Options } from "ky";
 import type {
   JewelryResponse,
   User,
@@ -9,38 +9,38 @@ import type {
   StoneProperties,
   QuoteResponse,
   LoginFormValues,
-} from "./types"
-import { cleanParams } from "./utils"
+} from "./types";
+import { cleanParams } from "./utils";
 
 export interface ApiConfig {
-  baseUrl: string
-  companyId: string | number
-  kyOptions?: Options
+  baseUrl: string;
+  companyId: string | number;
+  kyOptions?: Options;
 }
 
-type SearchParams = Record<string, string | number | boolean | undefined>
+type SearchParams = Record<string, string | number | boolean | undefined>;
 
 export const createClient = (config: ApiConfig) => {
-  const { baseUrl, companyId, kyOptions } = config
+  const { baseUrl, companyId, kyOptions } = config;
 
   const api = ky.create({
-    prefixUrl: baseUrl,
+    prefix: baseUrl,
     retry: 1,
     hooks: {
       beforeRequest: [
         ({ request }) => {
-          request.headers.set("X-Requested-With", "XMLHttpRequest")
+          request.headers.set("X-Requested-With", "XMLHttpRequest");
         },
       ],
     },
     ...kyOptions,
-  })
+  });
 
   const client = {
     raw: api,
     jewelries: {
       findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams)
+        const cleanedParams = cleanParams(searchParams);
 
         return api
           .get("jewelries", {
@@ -49,13 +49,13 @@ export const createClient = (config: ApiConfig) => {
               ...cleanedParams,
             },
           })
-          .json<JewelryResponse>()
+          .json<JewelryResponse>();
       },
     },
 
     stones: {
       findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams)
+        const cleanedParams = cleanParams(searchParams);
 
         return api
           .get("stones", {
@@ -64,48 +64,48 @@ export const createClient = (config: ApiConfig) => {
               ...cleanedParams,
             },
           })
-          .json<StoneResponse>()
+          .json<StoneResponse>();
       },
     },
 
     properties: {
       jewelryProperties: (params?: {
-        category?: string
-        sub_category?: string
+        category?: string;
+        sub_category?: string;
       }) => {
         return api
           .get(`companies/${companyId}/jewelry-properties`, {
             searchParams: params,
           })
-          .json<JewelryProperties>()
+          .json<JewelryProperties>();
       },
 
       stoneProperties: () => {
         return api
           .get(`companies/${companyId}/stone-properties`)
-          .json<StoneProperties>()
+          .json<StoneProperties>();
       },
     },
 
     bookmarks: {
       findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams)
+        const cleanedParams = cleanParams(searchParams);
 
         return api
           .get("bookmarks", { searchParams: cleanedParams })
-          .json<BookmarkResponse>()
+          .json<BookmarkResponse>();
       },
       create: (data: { stone_id?: number; jewelry_id?: number }) => {
-        return api.post("bookmarks", { json: data }).json()
+        return api.post("bookmarks", { json: data }).json();
       },
       delete: (data: { stone_id?: number; jewelry_id?: number }) => {
-        return api.delete("bookmarks/0", { json: data })
+        return api.delete("bookmarks/0", { json: data });
       },
     },
 
     quotes: {
       findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams)
+        const cleanedParams = cleanParams(searchParams);
 
         return api
           .get("quotes", {
@@ -114,7 +114,7 @@ export const createClient = (config: ApiConfig) => {
               ...cleanedParams,
             },
           })
-          .json<QuoteResponse>()
+          .json<QuoteResponse>();
       },
     },
 
@@ -138,10 +138,10 @@ export const createClient = (config: ApiConfig) => {
           .json<User>(),
 
       signUp: (data: {
-        full_name: string
-        email: string
-        password: string
-        password_confirmation: string
+        full_name: string;
+        email: string;
+        password: string;
+        password_confirmation: string;
       }) =>
         api
           .post("signup", {
@@ -155,9 +155,9 @@ export const createClient = (config: ApiConfig) => {
           })
           .json<User>(),
     },
-  }
+  };
 
-  return client
-}
+  return client;
+};
 
-export type ApiClient = ReturnType<typeof createClient>
+export type ApiClient = ReturnType<typeof createClient>;
