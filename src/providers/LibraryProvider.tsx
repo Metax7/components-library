@@ -10,6 +10,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const LibraryContext = createContext<LibraryConfig | null>(null);
 
@@ -95,6 +96,7 @@ export const LibraryProvider = ({
       <QueryClientProvider client={queryClient}>
         <Toaster richColors />
         {children}
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </LibraryContext.Provider>
   );
