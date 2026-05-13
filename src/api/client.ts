@@ -5,6 +5,7 @@ import type { App } from "./elysia";
 
 export interface ApiClientConfig {
   baseUrl: string;
+  companyId?: string | number;
   kyOptions?: Options;
 }
 
@@ -13,6 +14,7 @@ export const createClient = (config: ApiClientConfig) => {
 
   const fetcher = ky.create({
     retry: 1,
+    timeout: 30000,
     throwHttpErrors: false, // Let Eden Treaty handle errors
     hooks: {
       beforeRequest: [

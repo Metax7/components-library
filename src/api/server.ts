@@ -8,7 +8,7 @@ export interface ServerSideHooks {
 }
 
 export const createServerClient = (
-  config: ApiClientConfig,
+  config: ApiClientConfig & { companyId?: string | number },
   hooks: ServerSideHooks,
 ) => {
   return createClient({
@@ -24,12 +24,32 @@ export const createServerClient = (
             if (token) {
               request.headers.set("Authorization", token);
             }
+
+            // Automatically set x-action-type based on common auth paths
+            const url = new URL(request.url);
+            if (url.pathname.endsWith("/login")) {
+              request.headers.set("x-action-type", "login");
+            } else if (url.pathname.endsWith("/signup")) {
+              request.headers.set("x-action-type", "signUp");
+            } else if (url.pathname.endsWith("/logout")) {
+              request.headers.set("x-action-type", "logout");
+            }
           },
         ],
         afterResponse: [
           ...(config.kyOptions?.hooks?.afterResponse || []),
           async ({ request, response }) => {
             const actionType = request.headers.get("x-action-type");
+            console.log(`[serverApi] ${request.method} ${request.url} -> Status ${response.status}`);
+            console.log(`[serverApi] actionType from request: ${actionType}`);
+
+            if (!response.ok) {
+              try {
+                const errorBody = await response.clone().text();
+                console.error(`[serverApi] Error body:`, errorBody);
+              } catch (e) {}
+            }
+
             if (!actionType) return;
 
             switch (actionType) {
@@ -37,13 +57,17 @@ export const createServerClient = (
               case "signUp":
                 if (response.ok) {
                   const token = response.headers.get("authorization");
+                  console.log(`[serverApi] Login/SignUp success. Token found: ${!!token}`);
+
                   if (token) {
                     await hooks.setAuthToken(token);
                   }
                 }
                 break;
               case "logout":
-                await hooks.removeAuthToken();
+                if (response.ok) {
+                  await hooks.removeAuthToken();
+                }
                 break;
             }
           },

@@ -10,7 +10,7 @@ import type {
   StoneProperties,
   QuoteResponse,
 } from "./types";
-import { cleanParams } from "./utils";
+import { cleanParams, setResponseCookie } from "./utils";
 
 export interface ApiConfig {
   baseUrl: string;
@@ -37,14 +37,16 @@ export const createApiApp = (config: ApiConfig) => {
   return new Elysia({ prefix: "/api" })
     .decorate("api", api)
     .decorate("companyId", companyId)
-    .resolve(({ cookie: { auth_token } }) => {
+    .resolve(({ cookie: { auth_token }, headers }) => {
       return {
         getHeaders: () => {
-          const headers: Record<string, string> = {};
-          if (auth_token && auth_token.value) {
-            headers["Authorization"] = auth_token.value as string;
+          const headersMap: Record<string, string> = {};
+          const token = auth_token?.value || headers["authorization"];
+
+          if (token) {
+            headersMap["Authorization"] = token as string;
           }
-          return headers;
+          return headersMap;
         },
       };
     })
@@ -146,7 +148,7 @@ export const createApiApp = (config: ApiConfig) => {
         })
         .post(
           "/login",
-          async ({ body, api, companyId, cookie: { auth_token } }) => {
+          async ({ body, api, companyId, cookie: { auth_token }, set }) => {
             const response = await api.post("login", {
               json: {
                 user: {
@@ -159,15 +161,10 @@ export const createApiApp = (config: ApiConfig) => {
             const user = await response.json<User>();
             const token = response.headers.get("authorization");
 
-            if (token && auth_token) {
-              auth_token.set({
-                value: token,
-                maxAge: 60 * 60 * 24 * 7,
-                httpOnly: true,
-                // @ts-ignore
-                secure: typeof process !== "undefined" && process.env.NODE_ENV === "production",
-                path: "/",
-              });
+            if (token) {
+              set.headers["authorization"] = token;
+              set.headers["x-action-type"] = "login";
+              setResponseCookie(auth_token, token);
             }
             return user;
           },
@@ -180,7 +177,7 @@ export const createApiApp = (config: ApiConfig) => {
         )
         .post(
           "/signup",
-          async ({ body, api, companyId, cookie: { auth_token } }) => {
+          async ({ body, api, companyId, cookie: { auth_token }, set }) => {
             const response = await api.post("signup", {
               json: {
                 user: {
@@ -192,15 +189,11 @@ export const createApiApp = (config: ApiConfig) => {
             });
             const user = await response.json<User>();
             const token = response.headers.get("authorization");
-            if (token && auth_token) {
-              auth_token.set({
-                value: token,
-                httpOnly: true,
-                // @ts-ignore
-                secure: typeof process !== "undefined" && process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 60 * 60 * 24 * 7, // 1 week
-              });
+
+            if (token) {
+              set.headers["authorization"] = token;
+              set.headers["x-action-type"] = "signUp";
+              setResponseCookie(auth_token, token);
             }
             return user;
           },
@@ -215,11 +208,12 @@ export const createApiApp = (config: ApiConfig) => {
         )
         .post(
           "/logout",
-          async ({ api, getHeaders, cookie: { auth_token } }) => {
+          async ({ api, getHeaders, cookie: { auth_token }, set }) => {
             await api.delete("logout", {
               headers: { "x-action-type": "logout", ...getHeaders() },
             });
-            if (auth_token) auth_token.remove();
+            set.headers["x-action-type"] = "logout";
+            auth_token?.remove();
             return { success: true };
           },
         ),
