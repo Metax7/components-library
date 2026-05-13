@@ -8,8 +8,9 @@ import type {
   JewelryProperties,
   StoneProperties,
 } from "../api/types";
-import type { ApiClient } from "../api";
+import { createClient, type ApiClient } from "../api";
 import type { Dal } from "../dal";
+import { useLibConfig } from "@/providers/LibraryProvider";
 
 export interface BookmarksParams {
   sort_by?: string;
@@ -107,11 +108,10 @@ export type InferData<T extends DataOptions> = ResourceReturnMap[T["resource"]];
 
 export interface UseDataDeps {
   api: ApiClient;
-  dal: Dal;
 }
 
 export function createUseData(deps: UseDataDeps) {
-  const { api, dal } = deps;
+  const { api } = deps;
 
   return function useData<T extends DataOptions>(
     options: T,
@@ -157,14 +157,19 @@ export function createUseData(deps: UseDataDeps) {
     const queryFn = async (): Promise<InferData<T>> => {
       switch (resource) {
         case "session":
-          return (await dal.auth.getCurrentUser()) as InferData<T>;
+          return (await api.auth.me.get()).data as InferData<T>;
 
         case "bookmarks": {
           const { params } = options as {
             resource: "bookmarks";
             params?: BookmarksParams;
           };
-          return (await dal.bookmarks.findMany(params)) as InferData<T>;
+
+          return (
+            await api.bookmarks.get({
+              query: params as any,
+            })
+          ).data as InferData<T>;
         }
 
         case "jewelries": {
@@ -172,10 +177,12 @@ export function createUseData(deps: UseDataDeps) {
             resource: "jewelries";
             params?: JewelriesParams;
           };
-          const res = await dal.jewelries.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { data, error } = await api.jewelries.get({
+            query: params as any,
+          });
+
+          if (error) throw new Error(error.value as string);
+          return data as InferData<T>;
         }
 
         case "stones": {
@@ -183,24 +190,27 @@ export function createUseData(deps: UseDataDeps) {
             resource: "stones";
             params?: StonesParams;
           };
-          const res = await dal.stones.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { data, error } = await api.stones.get({
+            query: params as any,
+          });
+          if (error) throw new Error(error.value as string);
+          return data as InferData<T>;
         }
 
         case "properties": {
           const { type, category, sub_category } = (
             options as { resource: "properties"; params: PropertiesParams }
           ).params;
-          return (
-            type === "jewelry"
-              ? await api.properties.jewelryProperties({
-                  category,
-                  sub_category,
-                })
-              : await api.properties.stoneProperties()
-          ) as InferData<T>;
+
+          if (type === "jewelry") {
+            const { data } = await api.properties.jewelry.get({
+              query: { category, sub_category } as any,
+            });
+            return data as InferData<T>;
+          } else {
+            const { data } = await api.properties.stone.get();
+            return data as InferData<T>;
+          }
         }
 
         case "quotes": {
@@ -208,10 +218,11 @@ export function createUseData(deps: UseDataDeps) {
             resource: "quotes";
             params?: QuotesParams;
           };
-          const res = await dal.quotes.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { data, error } = await api.quotes.get({
+            query: params as any,
+          });
+          if (error) throw new Error(error.value as string);
+          return data as InferData<T>;
         }
       }
     };

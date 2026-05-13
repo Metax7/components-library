@@ -1,5 +1,4 @@
-import { HTTPError } from "ky"
-import type { ActionDeps } from "./auth"
+import type { ActionDeps } from "./auth";
 
 export const createBookmarkActions = ({ api, revalidateTag }: ActionDeps) => {
   return {
@@ -8,41 +7,36 @@ export const createBookmarkActions = ({ api, revalidateTag }: ActionDeps) => {
       type,
       isBookmarked,
     }: {
-      id: number
-      type: "stone" | "jewelry" | "diamond"
-      isBookmarked: boolean
+      id: number;
+      type: "stone" | "jewelry" | "diamond";
+      isBookmarked: boolean;
     }) => {
-      const isStone = type === "stone" || type === "diamond"
-      const payload = isStone ? { stone_id: id } : { jewelry_id: id }
+      const isStone = type === "stone" || type === "diamond";
+      const payload = isStone ? { stone_id: id } : { jewelry_id: id };
 
-      try {
-        if (isBookmarked) {
-          await api.bookmarks.delete(payload)
-        } else {
-          await api.bookmarks.create(payload)
-        }
+      let error = null;
+      if (isBookmarked) {
+        const res = await api.bookmarks.delete(payload);
+        error = res.error;
+      } else {
+        const res = await api.bookmarks.post(payload);
+        error = res.error;
+      }
 
-        if (revalidateTag) {
-          revalidateTag("diamonds")
-          revalidateTag("bookmarks")
-        }
-
-        return { success: true }
-      } catch (error) {
-        console.error("Failed to toggle bookmark:", error)
-        if (error instanceof HTTPError) {
-          const body = await error.response.json().catch(() => ({}))
-          return {
-            success: false,
-            error: body.error || error.message,
-          }
-        }
-
+      if (error) {
+        const body = error.value as any;
         return {
           success: false,
-          error: "Failed to toggle bookmark. Please try again later.",
-        }
+          error: body?.error || body?.message || "Failed to toggle bookmark",
+        };
       }
+
+      if (revalidateTag) {
+        revalidateTag("diamonds");
+        revalidateTag("bookmarks");
+      }
+
+      return { success: true };
     },
-  }
-}
+  };
+};
