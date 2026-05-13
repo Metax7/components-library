@@ -1,7 +1,7 @@
 import { treaty } from "@elysia/eden";
 import ky from "ky";
 import type { Options } from "ky";
-import type { App } from "./elysia";
+import type { App } from "./routes";
 
 export interface ApiClientConfig {
   baseUrl: string;

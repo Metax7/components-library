@@ -27,9 +27,9 @@
       "types": "./dist/api/index.d.ts",
       "import": "./dist/api/index.js"
     },
-    "./api/elysia": {
-      "types": "./dist/api/elysia.d.ts",
-      "import": "./dist/api/elysia.js"
+    "./api/routes": {
+      "types": "./dist/api/routes/index.d.ts",
+      "import": "./dist/api/routes/index.js"
     },
     "./actions": {
       "types": "./dist/actions/index.d.ts",

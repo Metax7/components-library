@@ -8,9 +8,7 @@ import type {
   JewelryProperties,
   StoneProperties,
 } from "../api/types";
-import { createClient, type ApiClient } from "../api";
-import type { Dal } from "../dal";
-import { useLibConfig } from "@/providers/LibraryProvider";
+import { type ApiClient } from "../api";
 
 export interface BookmarksParams {
   sort_by?: string;

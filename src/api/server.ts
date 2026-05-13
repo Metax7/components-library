@@ -40,8 +40,6 @@ export const createServerClient = (
           ...(config.kyOptions?.hooks?.afterResponse || []),
           async ({ request, response }) => {
             const actionType = request.headers.get("x-action-type");
-            console.log(`[serverApi] ${request.method} ${request.url} -> Status ${response.status}`);
-            console.log(`[serverApi] actionType from request: ${actionType}`);
 
             if (!response.ok) {
               try {
@@ -57,7 +55,6 @@ export const createServerClient = (
               case "signUp":
                 if (response.ok) {
                   const token = response.headers.get("authorization");
-                  console.log(`[serverApi] Login/SignUp success. Token found: ${!!token}`);
 
                   if (token) {
                     await hooks.setAuthToken(token);
