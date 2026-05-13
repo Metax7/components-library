@@ -11,6 +11,7 @@ export interface ApiClientConfig {
 
 export const createClient = (config: ApiClientConfig) => {
   const { baseUrl, kyOptions } = config;
+  const url = new URL(baseUrl);
 
   const fetcher = ky.create({
     retry: 1,
@@ -26,7 +27,7 @@ export const createClient = (config: ApiClientConfig) => {
     ...kyOptions,
   });
 
-  return treaty<App>(baseUrl, { fetcher }).api;
+  return treaty<App>(url.host, { fetcher }).api;
 };
 
 export type ApiClient = ReturnType<typeof createClient>;
