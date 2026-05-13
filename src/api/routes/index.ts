@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import type { Options } from "ky";
+import { HTTPError, type Options } from "ky";
 import type {
   JewelryResponse,
   StoneResponse,
@@ -8,7 +8,7 @@ import type {
   StoneProperties,
   QuoteResponse,
 } from "../types";
-import { cleanParams } from "../utils";
+import { cleanParams, parseRailsErrors } from "../utils";
 import { authRoutes } from "./auth";
 
 export interface ApiConfig {
@@ -22,6 +22,17 @@ export interface ApiConfig {
  */
 export const createApiApp = (config: ApiConfig) => {
   return new Elysia({ prefix: "/api" })
+    .error({ HTTPError })
+    .onError(async ({ error, set, code }) => {
+      if (code === "HTTPError") {
+        set.status = error.response.status;
+        try {
+          return await error.response.json();
+        } catch {
+          return { error: parseRailsErrors(error.data) };
+        }
+      }
+    })
     .use(authRoutes(config))
     .get("/jewelries", ({ query, authApi, companyId }) => {
       return authApi
@@ -71,6 +82,7 @@ export const createApiApp = (config: ApiConfig) => {
           "/",
           async ({ body, authApi }) => {
             await authApi.post("bookmarks", { json: body });
+
             return { success: true };
           },
           {
