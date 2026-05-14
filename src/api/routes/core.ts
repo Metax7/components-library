@@ -29,12 +29,6 @@ export const corePlugin = (config: ApiConfig) =>
         | string
         | undefined;
 
-      if (token) {
-        console.log(
-          `[Elysia Core] Token found (${auth_token?.value ? "cookie" : "header"}). Extending API.`,
-        );
-      }
-
       // Provide an "authorized" ky instance that automatically injects the token
       const authApi = api.extend({
         hooks: {
