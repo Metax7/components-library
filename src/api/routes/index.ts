@@ -10,6 +10,12 @@ import type {
 } from "../types";
 import { cleanParams, parseRailsErrors } from "../utils";
 import { authRoutes } from "./auth";
+import {
+  bookmarksParamsSchema,
+  jewelriesParamsSchema,
+  propertiesParamsSchema,
+  stonesParamsSchema,
+} from "@/hooks";
 
 export interface ApiConfig {
   baseUrl: string;
@@ -34,34 +40,53 @@ export const createApiApp = (config: ApiConfig) => {
       }
     })
     .use(authRoutes(config))
-    .get("/jewelries", ({ query, authApi, companyId }) => {
-      return authApi
-        .get("jewelries", {
-          searchParams: {
-            company_id: companyId,
-            ...cleanParams(query as Record<string, any>),
-          },
-        })
-        .json<JewelryResponse>();
-    })
-    .get("/stones", ({ query, authApi, companyId }) => {
-      return authApi
-        .get("stones", {
-          searchParams: {
-            company_id: companyId,
-            ...cleanParams(query as Record<string, any>),
-          },
-        })
-        .json<StoneResponse>();
-    })
+    .get(
+      "/jewelries",
+      ({ query, authApi, companyId }) => {
+        return authApi
+          .get("jewelries", {
+            searchParams: {
+              company_id: companyId,
+              ...cleanParams(query),
+            },
+          })
+          .json<JewelryResponse>();
+      },
+      {
+        query: jewelriesParamsSchema,
+      },
+    )
+    .get(
+      "/stones",
+      ({ query, authApi, companyId }) => {
+        return authApi
+          .get("stones", {
+            searchParams: {
+              company_id: companyId,
+              ...cleanParams(query),
+            },
+          })
+          .json<StoneResponse>();
+      },
+      {
+        query: stonesParamsSchema,
+      },
+    )
     .group("/properties", (app) =>
       app
-        .get("/jewelry", ({ query, authApi, companyId }) =>
-          authApi
-            .get(`companies/${companyId}/jewelry-properties`, {
-              searchParams: query as Record<string, any>,
-            })
-            .json<JewelryProperties>(),
+        .get(
+          "/jewelry",
+          ({ query, authApi, companyId }) =>
+            authApi
+              .get(`companies/${companyId}/jewelry-properties`, {
+                searchParams: cleanParams(query),
+              })
+              .json<JewelryProperties>(),
+          {
+            query: propertiesParamsSchema.omit({
+              type: true,
+            }),
+          },
         )
         .get("/stone", ({ authApi, companyId }) =>
           authApi
@@ -71,12 +96,18 @@ export const createApiApp = (config: ApiConfig) => {
     )
     .group("/bookmarks", (app) =>
       app
-        .get("/", ({ query, authApi }) =>
-          authApi
-            .get("bookmarks", {
-              searchParams: cleanParams(query as Record<string, any>),
-            })
-            .json<BookmarkResponse>(),
+        .get(
+          "/",
+          ({ query, authApi }) => {
+            return authApi
+              .get("bookmarks", {
+                searchParams: cleanParams(query),
+              })
+              .json<BookmarkResponse>();
+          },
+          {
+            query: bookmarksParamsSchema,
+          },
         )
         .post(
           "/",
@@ -111,7 +142,7 @@ export const createApiApp = (config: ApiConfig) => {
         .get("quotes", {
           searchParams: {
             company_id: companyId,
-            ...cleanParams(query as Record<string, any>),
+            ...cleanParams(query),
           },
         })
         .json<QuoteResponse>();

@@ -34,6 +34,7 @@ export const createBookmarkActions = ({ api, revalidateTag }: ActionDeps) => {
       if (revalidateTag) {
         revalidateTag("diamonds");
         revalidateTag("bookmarks");
+        revalidateTag("jewelries");
       }
 
       return { success: true };
