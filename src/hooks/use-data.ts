@@ -8,83 +8,105 @@ import type {
   JewelryProperties,
   StoneProperties,
 } from "../api/types";
-import type { ApiClient } from "../api";
-import type { Dal } from "../dal";
+import { type ApiClient } from "../api";
+import { z } from "zod";
 
-export interface BookmarksParams {
-  sort_by?: string;
-  sort_dir?: "asc" | "desc";
-}
+export const bookmarksParamsSchema = z.object({
+  sort_by: z.string().optional().nullable(),
+  sort_dir: z
+    .union([z.literal("asc"), z.literal("desc")])
+    .optional()
+    .nullable(),
+});
 
-export interface JewelriesParams {
-  company_id?: number | null;
-  page?: number | null;
-  per_page?: number | null;
-  sort_by?: string | null;
-  sort_dir?: "asc" | "desc" | null;
-  item_no?: string | null;
-  description?: string | null;
-  category?: string | null;
-  sub_category?: string | null;
-  certified_only?: boolean | null;
-  only_diamonds?: boolean | null;
-  only_gemstones?: boolean | null;
-  only_fancy_diamonds?: boolean | null;
-  stone_type?: string | null;
-  stone_color?: string | null;
-  stone_shape?: string | null;
-  metal_type?: string | null;
-  metal_color?: string | null;
-  metal_karat?: string | null;
-  metal_weight_min?: number | null;
-  metal_weight_max?: number | null;
-  on_hand?: boolean | null;
-  size?: string | null;
-  gender?: string | null;
-  design?: string | null;
-  model?: string | null;
-  style?: string | null;
-  price_min?: number | null;
-  price_max?: number | null;
-}
+export type BookmarksParams = z.infer<typeof bookmarksParamsSchema>;
 
-export interface StonesParams {
-  company_id?: number | null;
-  page?: number | null;
-  per_page?: number | null;
-  sort_by?: string | null;
-  sort_dir?: "asc" | "desc" | null;
-  item_no?: string | null;
-  description?: string | null;
-  stone_type?: string | null;
-  color?: string | null;
-  clarity?: string | null;
-  shape?: string | null;
-  carats_min?: number | null;
-  carats_max?: number | null;
-  price_min?: number | null;
-  price_max?: number | null;
-  lab?: string | null;
-  cut?: string | null;
-  polish?: string | null;
-  symmetry?: string | null;
-  fluorescence?: string | null;
-}
+export const jewelriesParamsSchema = z.object({
+  company_id: z.coerce.number().optional().nullable(),
+  page: z.coerce.number().optional().nullable(),
+  per_page: z.coerce.number().optional().nullable(),
+  sort_by: z.string().optional().nullable(),
+  sort_dir: z
+    .union([z.literal("asc"), z.literal("desc")])
+    .optional()
+    .nullable(),
+  item_no: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  sub_category: z.string().optional().nullable(),
+  certified_only: z.coerce.boolean().optional().nullable(),
+  only_diamonds: z.coerce.boolean().optional().nullable(),
+  only_gemstones: z.coerce.boolean().optional().nullable(),
+  only_fancy_diamonds: z.coerce.boolean().optional().nullable(),
+  stone_type: z.string().optional().nullable(),
+  stone_color: z.string().optional().nullable(),
+  stone_shape: z.string().optional().nullable(),
+  metal_type: z.string().optional().nullable(),
+  metal_color: z.string().optional().nullable(),
+  metal_karat: z.string().optional().nullable(),
+  metal_weight_min: z.coerce.number().optional().nullable(),
+  metal_weight_max: z.coerce.number().optional().nullable(),
+  on_hand: z.coerce.boolean().optional().nullable(),
+  size: z.string().optional().nullable(),
+  gender: z.string().optional().nullable(),
+  design: z.string().optional().nullable(),
+  model: z.string().optional().nullable(),
+  style: z.string().optional().nullable(),
+  price_min: z.coerce.number().optional().nullable(),
+  price_max: z.coerce.number().optional().nullable(),
+});
 
-export interface PropertiesParams {
-  type: "jewelry" | "stone";
-  category?: string;
-  sub_category?: string;
-}
+export type JewelriesParams = z.infer<typeof jewelriesParamsSchema>;
 
-export interface QuotesParams {
-  status?: string | null;
-  search?: string | null;
-  sort_by?: string | null;
-  sort_dir?: "asc" | "desc" | null;
-  page?: number | null;
-  per_page?: number | null;
-}
+export const stonesParamsSchema = z.object({
+  company_id: z.coerce.number().optional().nullable(),
+  page: z.coerce.number().optional().nullable(),
+  per_page: z.coerce.number().optional().nullable(),
+  sort_by: z.string().optional().nullable(),
+  sort_dir: z
+    .union([z.literal("asc"), z.literal("desc")])
+    .optional()
+    .nullable(),
+  item_no: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  stone_type: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
+  clarity: z.string().optional().nullable(),
+  shape: z.string().optional().nullable(),
+  carats_min: z.coerce.number().optional().nullable(),
+  carats_max: z.coerce.number().optional().nullable(),
+  price_min: z.coerce.number().optional().nullable(),
+  price_max: z.coerce.number().optional().nullable(),
+  lab: z.string().optional().nullable(),
+  cut: z.string().optional().nullable(),
+  polish: z.string().optional().nullable(),
+  symmetry: z.string().optional().nullable(),
+  fluorescence: z.string().optional().nullable(),
+});
+
+export type StonesParams = z.infer<typeof stonesParamsSchema>;
+
+export const propertiesParamsSchema = z.object({
+  type: z.union([z.literal("jewelry"), z.literal("stone")]),
+  category: z.string().optional(),
+  sub_category: z.string().optional(),
+});
+
+export type PropertiesParams = z.infer<typeof propertiesParamsSchema>;
+
+export const quotesParamsSchema = z.object({
+  status: z.string().optional().nullable(),
+  search: z.string().optional().nullable(),
+  sort_by: z.string().optional().nullable(),
+  sort_dir: z
+    .union([z.literal("asc"), z.literal("desc")])
+    .optional()
+    .nullable(),
+  page: z.coerce.number().optional().nullable(),
+  per_page: z.coerce.number().optional().nullable(),
+});
+
+export type QuotesParams = z.infer<typeof quotesParamsSchema>;
 
 export type DataOptions =
   | { resource: "session" }
@@ -107,11 +129,10 @@ export type InferData<T extends DataOptions> = ResourceReturnMap[T["resource"]];
 
 export interface UseDataDeps {
   api: ApiClient;
-  dal: Dal;
 }
 
 export function createUseData(deps: UseDataDeps) {
-  const { api, dal } = deps;
+  const { api } = deps;
 
   return function useData<T extends DataOptions>(
     options: T,
@@ -123,33 +144,17 @@ export function createUseData(deps: UseDataDeps) {
         case "session":
           return ["session"];
         case "bookmarks":
-          return [
-            "bookmarks",
-            (options as { resource: "bookmarks"; params?: BookmarksParams })
-              .params,
-          ];
+          return ["bookmarks", options.params];
         case "jewelries":
-          return [
-            "jewelries",
-            (options as { resource: "jewelries"; params?: JewelriesParams })
-              .params,
-          ];
+          return ["jewelries", options.params];
         case "stones":
-          return [
-            "stones",
-            (options as { resource: "stones"; params?: StonesParams }).params,
-          ];
+          return ["stones", options.params];
         case "properties": {
-          const { type, ...params } = (
-            options as { resource: "properties"; params: PropertiesParams }
-          ).params;
+          const { type, ...params } = options.params;
           return ["properties", `${type}-properties`, params];
         }
         case "quotes": {
-          return [
-            "quotes",
-            (options as { resource: "quotes"; params?: QuotesParams }).params,
-          ];
+          return ["quotes", options.params];
         }
       }
     })();
@@ -157,61 +162,64 @@ export function createUseData(deps: UseDataDeps) {
     const queryFn = async (): Promise<InferData<T>> => {
       switch (resource) {
         case "session":
-          return (await dal.auth.getCurrentUser()) as InferData<T>;
+          return (await api.auth.me.get()).data as InferData<T>;
 
         case "bookmarks": {
-          const { params } = options as {
-            resource: "bookmarks";
-            params?: BookmarksParams;
-          };
-          return (await dal.bookmarks.findMany(params)) as InferData<T>;
+          const { params } = options;
+
+          return (
+            await api.bookmarks.get({
+              query: params,
+            })
+          ).data as InferData<T>;
         }
 
         case "jewelries": {
-          const { params } = options as {
-            resource: "jewelries";
-            params?: JewelriesParams;
-          };
-          const res = await dal.jewelries.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { params } = options;
+
+          const { data, error } = await api.jewelries.get({
+            query: params,
+          });
+
+          if (error) throw new Error(error.value as any);
+
+          return data as InferData<T>;
         }
 
         case "stones": {
-          const { params } = options as {
-            resource: "stones";
-            params?: StonesParams;
-          };
-          const res = await dal.stones.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { params } = options;
+
+          const { data, error } = await api.stones.get({
+            query: params,
+          });
+
+          if (error) throw new Error(error.value as any);
+          return data as InferData<T>;
         }
 
         case "properties": {
-          const { type, category, sub_category } = (
-            options as { resource: "properties"; params: PropertiesParams }
-          ).params;
-          return (
-            type === "jewelry"
-              ? await api.properties.jewelryProperties({
-                  category,
-                  sub_category,
-                })
-              : await api.properties.stoneProperties()
-          ) as InferData<T>;
+          const { type, category, sub_category } = options.params;
+
+          if (type === "jewelry") {
+            const { data } = await api.properties.jewelry.get({
+              query: { category, sub_category },
+            });
+            return data as InferData<T>;
+          } else {
+            const { data } = await api.properties.stone.get();
+            return data as InferData<T>;
+          }
         }
 
         case "quotes": {
-          const { params } = options as {
-            resource: "quotes";
-            params?: QuotesParams;
-          };
-          const res = await dal.quotes.findMany(params);
-          if (res && "error" in res && (res as any).error)
-            throw new Error((res as any).error);
-          return res as InferData<T>;
+          const { params } = options;
+
+          const { data, error } = await api.quotes.get({
+            query: params,
+          });
+
+          if (error) throw new Error(error.value as string);
+          return data as InferData<T>;
         }
       }
     };

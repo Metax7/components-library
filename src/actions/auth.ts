@@ -1,95 +1,58 @@
-import { HTTPError } from "ky"
-import { parseRailsErrors } from "../api/utils"
+import { parseRailsErrors } from "../api/utils";
 import type {
   ApiClient,
   LoginFormValues,
   SignupFormValues,
   User,
-} from "../api"
+} from "../api";
 
 export interface ActionDeps {
-  api: ApiClient
-  revalidateTag?: (tag: string) => void
+  api: ApiClient;
+  revalidateTag?: (tag: string) => void;
 }
 
 export const createAuthActions = ({ api, revalidateTag }: ActionDeps) => {
   return {
     signIn: async (_prevState: unknown, data: LoginFormValues) => {
-      try {
-        const res = await api.auth.signIn(data)
-        return { data: res, error: null }
-      } catch (error) {
-        console.error("Error signing in:", error)
+      const { data: res, error } = await api.auth.login.post(data);
 
-        if (error instanceof HTTPError) {
-          const body = await error.response.json().catch(() => ({}))
-          return {
-            data: null,
-            error: body.error || error.message,
-          }
-        }
-
-        return {
-          data: null,
-          error: "Something went wrong. Please try again later.",
-        }
+      if (error) {
+        const serverMsg =
+          (error.value as any)?.error ?? (error.value as any)?.message;
+        const friendlyMsg = serverMsg ?? "Login failed";
+        return { data: null, error: friendlyMsg };
       }
+
+      return { data: res, error: null };
     },
 
     signUp: async (_prevState: unknown, data: SignupFormValues) => {
-      try {
-        const payload = {
-          full_name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          password: data.password,
-          password_confirmation: data.passwordConfirmation,
-        }
+      const payload = {
+        full_name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        password: data.password,
+        password_confirmation: data.passwordConfirmation,
+      };
 
-        const res = await api.auth.signUp(payload)
-        return { data: res, error: null }
-      } catch (error) {
-        console.error("Error signing up:", error)
-
-        if (error instanceof HTTPError) {
-          const body = await error.response.json().catch(() => ({}))
-          return {
-            data: null,
-            error: parseRailsErrors(body),
-          }
-        }
-
+      const { data: res, error } = await api.auth.signup.post(payload);
+      if (error) {
+        const body = error.value as any;
         return {
           data: null,
-          error: "Something went wrong. Please try again later.",
-        }
+          error: parseRailsErrors(body) || "Signup failed",
+        };
       }
+      return { data: res, error: null };
     },
 
     signOut: async (userId: NonNullable<User>["id"]) => {
-      try {
-        await api.auth.signOut()
+      await api.auth.logout.post();
 
-        if (revalidateTag) {
-          revalidateTag(`user-${userId}`)
-        }
-
-        return { error: null }
-      } catch (error) {
-        console.error("Error signing out:", error)
-
-        if (error instanceof HTTPError) {
-          const body = await error.response.json().catch(() => ({}))
-          return {
-            data: null,
-            error: body.error || error.message,
-          }
-        }
-
-        return {
-          data: null,
-          error: "Something went wrong. Please try again later.",
-        }
+      if (revalidateTag) {
+        revalidateTag(`user-${userId}`);
       }
+
+      return { error: null };
     },
-  }
-}
+  };
+};

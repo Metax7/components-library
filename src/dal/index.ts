@@ -1,4 +1,3 @@
-import { HTTPError } from "ky";
 import type { ApiClient } from "../api";
 import type {
   JewelriesParams,
@@ -20,8 +19,8 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
         if (cacheLife) cacheLife("hours");
 
         try {
-          const user = await api.auth.me();
-          if (!user) return null;
+          const { data: user, error } = await api.auth.me.get();
+          if (error || !user) return null;
 
           if (cacheTag) {
             cacheTag(`user-${user.id}`, "users");
@@ -44,9 +43,14 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
         if (cacheTag) cacheTag("bookmarks");
 
         try {
-          return await api.bookmarks.findMany(
-            params as Parameters<typeof api.bookmarks.findMany>[0],
-          );
+          const { data, error } = await api.bookmarks.get({
+            query: params as any,
+          });
+          if (error) {
+            console.error(error.value);
+            return null;
+          }
+          return data;
         } catch (error) {
           console.error(error);
           return null;
@@ -60,20 +64,22 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
         if (cacheTag) cacheTag("jewelries");
 
         try {
-          return await api.jewelries.findMany(
-            params as Parameters<typeof api.jewelries.findMany>[0],
-          );
-        } catch (error) {
-          console.error("Error getting jewelries:", error);
+          const { data, error } = await api.jewelries.get({
+            query: params as any,
+          });
 
-          if (error instanceof HTTPError) {
-            const body = await error.response.json().catch(() => ({}));
+          if (error) {
+            console.error("Error getting jewelries:", error.value);
+            const body = error.value as any;
             return {
               data: null,
-              error: body.message || error.message,
+              error: body?.message || body?.error || "Something went wrong. Please try again later.",
             };
           }
 
+          return data;
+        } catch (error) {
+          console.error("Error getting jewelries:", error);
           return {
             data: null,
             error: "Something went wrong. Please try again later.",
@@ -88,20 +94,22 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
         if (cacheTag) cacheTag("diamonds");
 
         try {
-          return await api.stones.findMany(
-            params as Parameters<typeof api.stones.findMany>[0],
-          );
-        } catch (error) {
-          console.error("Error getting diamonds:", error);
+          const { data, error } = await api.stones.get({
+            query: params as any,
+          });
 
-          if (error instanceof HTTPError) {
-            const body = await error.response.json().catch(() => ({}));
+          if (error) {
+            console.error("Error getting diamonds:", error.value);
+            const body = error.value as any;
             return {
               data: null,
-              error: body.message || error.message,
+              error: body?.message || body?.error || "Something went wrong. Please try again later.",
             };
           }
 
+          return data;
+        } catch (error) {
+          console.error("Error getting diamonds:", error);
           return {
             data: null,
             error: "Something went wrong. Please try again later.",
@@ -116,20 +124,22 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
         if (cacheTag) cacheTag("quotes");
 
         try {
-          return await api.quotes.findMany(
-            params as Parameters<typeof api.quotes.findMany>[0],
-          );
-        } catch (error) {
-          console.error("Error getting quotes:", error);
+          const { data, error } = await api.quotes.get({
+            query: params as any,
+          });
 
-          if (error instanceof HTTPError) {
-            const body = await error.response.json().catch(() => ({}));
+          if (error) {
+            console.error("Error getting quotes:", error.value);
+            const body = error.value as any;
             return {
               data: null,
-              error: body.message || error.message,
+              error: body?.message || body?.error || "Something went wrong. Please try again later.",
             };
           }
 
+          return data;
+        } catch (error) {
+          console.error("Error getting quotes:", error);
           return {
             data: null,
             error: "Something went wrong. Please try again later.",
@@ -141,3 +151,4 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
 };
 
 export type Dal = ReturnType<typeof createDal>;
+

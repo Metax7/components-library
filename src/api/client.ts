@@ -1,163 +1,67 @@
+import { treaty } from "@elysia/eden";
 import ky from "ky";
 import type { Options } from "ky";
-import type {
-  JewelryResponse,
-  User,
-  StoneResponse,
-  BookmarkResponse,
-  JewelryProperties,
-  StoneProperties,
-  QuoteResponse,
-  LoginFormValues,
-} from "./types";
-import { cleanParams } from "./utils";
+import type { App } from "./routes";
 
-export interface ApiConfig {
-  baseUrl: string;
-  companyId: string | number;
-  kyOptions?: Options;
+export interface ServerSideHooks {
+  getAuthToken: () => string | undefined | Promise<string | undefined>;
+  setAuthToken: (token: string) => void | Promise<void>;
+  removeAuthToken: () => void | Promise<void>;
 }
 
-type SearchParams = Record<string, string | number | boolean | undefined>;
+export interface ApiClientConfig {
+  baseUrl: string;
+  companyId?: string | number;
+  kyOptions?: Options;
+  hooks?: ServerSideHooks;
+}
 
-export const createClient = (config: ApiConfig) => {
-  const { baseUrl, companyId, kyOptions } = config;
+export const createClient = (config: ApiClientConfig) => {
+  const { baseUrl, kyOptions, hooks } = config;
+  const url = new URL(baseUrl);
 
-  const api = ky.create({
-    prefix: baseUrl,
+  const fetcher = ky.create({
     retry: 1,
+    timeout: 30000,
+    throwHttpErrors: false, // Let Eden Treaty handle errors
+    credentials: "include", // Enable cookie support by default
     hooks: {
       beforeRequest: [
-        ({ request }) => {
+        async ({ request }) => {
           request.headers.set("X-Requested-With", "XMLHttpRequest");
+
+          if (hooks?.getAuthToken) {
+            const token = await hooks.getAuthToken();
+            if (token) {
+              request.headers.set("Authorization", token);
+            }
+          }
+        },
+      ],
+      afterResponse: [
+        async ({ response }) => {
+          if (!hooks) return;
+
+          const actionType = response.headers.get("x-action-type");
+          if (!actionType) return;
+
+          if (response.ok) {
+            if (actionType === "login" || actionType === "signUp") {
+              const token = response.headers.get("authorization");
+              if (token) {
+                await hooks.setAuthToken(token);
+              }
+            } else if (actionType === "logout") {
+              await hooks.removeAuthToken();
+            }
+          }
         },
       ],
     },
     ...kyOptions,
   });
 
-  const client = {
-    raw: api,
-    jewelries: {
-      findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams);
-
-        return api
-          .get("jewelries", {
-            searchParams: {
-              company_id: companyId,
-              ...cleanedParams,
-            },
-          })
-          .json<JewelryResponse>();
-      },
-    },
-
-    stones: {
-      findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams);
-
-        return api
-          .get("stones", {
-            searchParams: {
-              company_id: companyId,
-              ...cleanedParams,
-            },
-          })
-          .json<StoneResponse>();
-      },
-    },
-
-    properties: {
-      jewelryProperties: (params?: {
-        category?: string;
-        sub_category?: string;
-      }) => {
-        return api
-          .get(`companies/${companyId}/jewelry-properties`, {
-            searchParams: params,
-          })
-          .json<JewelryProperties>();
-      },
-
-      stoneProperties: () => {
-        return api
-          .get(`companies/${companyId}/stone-properties`)
-          .json<StoneProperties>();
-      },
-    },
-
-    bookmarks: {
-      findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams);
-
-        return api
-          .get("bookmarks", { searchParams: cleanedParams })
-          .json<BookmarkResponse>();
-      },
-      create: (data: { stone_id?: number; jewelry_id?: number }) => {
-        return api.post("bookmarks", { json: data }).json();
-      },
-      delete: (data: { stone_id?: number; jewelry_id?: number }) => {
-        return api.delete("bookmarks/0", { json: data });
-      },
-    },
-
-    quotes: {
-      findMany: (searchParams?: SearchParams) => {
-        const cleanedParams = cleanParams(searchParams);
-
-        return api
-          .get("quotes", {
-            searchParams: {
-              company_id: companyId,
-              ...cleanedParams,
-            },
-          })
-          .json<QuoteResponse>();
-      },
-    },
-
-    auth: {
-      me: () => api.get("profile").json<User | null>(),
-
-      signOut: () =>
-        api.delete("logout", { headers: { "x-action-type": "logout" } }),
-
-      signIn: (data: LoginFormValues) =>
-        api
-          .post("login", {
-            json: {
-              user: {
-                company_id: companyId,
-                ...data,
-              },
-            },
-            headers: { "x-action-type": "login" },
-          })
-          .json<User>(),
-
-      signUp: (data: {
-        full_name: string;
-        email: string;
-        password: string;
-        password_confirmation: string;
-      }) =>
-        api
-          .post("signup", {
-            json: {
-              user: {
-                company_id: companyId,
-                ...data,
-              },
-            },
-            headers: { "x-action-type": "signUp" },
-          })
-          .json<User>(),
-    },
-  };
-
-  return client;
+  return treaty<App>(url.host, { fetcher }).api;
 };
 
 export type ApiClient = ReturnType<typeof createClient>;

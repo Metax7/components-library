@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useRef } from "react";
 import { type DefaultValues, type FieldValues, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 interface UseFormActionProps<TFieldValues extends FieldValues> {
@@ -57,6 +58,7 @@ export function useFormAction<TFieldValues extends FieldValues = FieldValues>({
 
     if (state.error) {
       onErrorRef.current?.(state.error);
+      toast.error(state.error);
     } else {
       onSuccessRef.current?.(state);
     }
