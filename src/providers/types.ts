@@ -4,7 +4,6 @@ export interface LibraryConfig {
   components?: Partial<Components>;
   enableDevtools?: boolean;
   router: Router;
-  baseUrl: string;
 }
 
 export interface Components {
