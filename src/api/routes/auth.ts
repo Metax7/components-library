@@ -25,6 +25,10 @@ export const authRoutes = (config: ApiConfig) =>
             set.headers["authorization"] = token;
             set.headers["x-action-type"] = "login";
             setResponseCookie(auth_token, token);
+
+            if (config.hooks?.setAuthToken) {
+              await config.hooks.setAuthToken(token);
+            }
           }
           return user;
         },
@@ -47,6 +51,10 @@ export const authRoutes = (config: ApiConfig) =>
             set.headers["authorization"] = token;
             set.headers["x-action-type"] = "signUp";
             setResponseCookie(auth_token, token);
+
+            if (config.hooks?.setAuthToken) {
+              await config.hooks.setAuthToken(token);
+            }
           }
           return user;
         },
@@ -73,6 +81,11 @@ export const authRoutes = (config: ApiConfig) =>
         });
         set.headers["x-action-type"] = "logout";
         auth_token?.remove();
+
+        if (config.hooks?.removeAuthToken) {
+          await config.hooks.removeAuthToken();
+        }
+
         return { success: true };
       }),
   );

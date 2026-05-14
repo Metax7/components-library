@@ -23,11 +23,15 @@ export const corePlugin = (config: ApiConfig) =>
         ...config.kyOptions,
       }),
     )
-    .derive({ as: "global" }, ({ api, cookie: { auth_token }, headers }) => {
-      // Resolve token directly in derive to ensure it's fresh and available for authApi
-      const token = (auth_token?.value || headers["authorization"]) as
+    .derive({ as: "global" }, async ({ api, cookie: { auth_token }, headers }) => {
+      // Resolve token from: Cookie -> Authorization Header -> Hooks
+      let token = (auth_token?.value || headers["authorization"]) as
         | string
         | undefined;
+
+      if (!token && config.hooks?.getAuthToken) {
+        token = await config.hooks.getAuthToken();
+      }
 
       // Provide an "authorized" ky instance that automatically injects the token
       const authApi = api.extend({

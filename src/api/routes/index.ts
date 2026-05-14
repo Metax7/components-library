@@ -1,3 +1,4 @@
+import { type ServerSideHooks } from "../client";
 import { Elysia, t } from "elysia";
 import { HTTPError, type Options } from "ky";
 import type {
@@ -21,6 +22,7 @@ export interface ApiConfig {
   baseUrl: string;
   companyId: string | number;
   kyOptions?: Options;
+  hooks?: ServerSideHooks;
 }
 
 /**
