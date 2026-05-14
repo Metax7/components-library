@@ -101,6 +101,7 @@
   "dependencies": {
     "@elysia/eden": "^1.4.10",
     "@hookform/resolvers": "^5.2.2",
+    "@sinclair/typebox": "^0.34.49",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "elysia": "^1.4.28",

@@ -52,7 +52,8 @@ export function useFormAction<TFieldValues extends FieldValues = FieldValues>({
   }, [onSuccess, onError]);
 
   useEffect(() => {
-    if (!state || state === lastProcessedStateRef.current) return;
+    // Skip if still initial or if state hasn't changed
+    if (state === null || state === lastProcessedStateRef.current) return;
 
     lastProcessedStateRef.current = state;
 
@@ -60,6 +61,7 @@ export function useFormAction<TFieldValues extends FieldValues = FieldValues>({
       onErrorRef.current?.(state.error);
       toast.error(state.error);
     } else {
+      // Trigger onSuccess whenever state changes and no error is present
       onSuccessRef.current?.(state);
     }
   }, [state]);
