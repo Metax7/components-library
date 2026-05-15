@@ -13,15 +13,20 @@ export const cleanParams = (searchParams?: Record<string, unknown>) => {
 export const parseRailsErrors = (data: any): RailsError => {
   if (!data) return "An unexpected error occurred";
 
-  if (Array.isArray(data.errors)) {
-    return data.errors;
+  if (Array.isArray(data.errors || data.error)) {
+    return data.errors || data.error;
   }
 
-  if (data.errors && typeof data.errors === "object") {
-    return Object.entries(data.errors).flatMap(([field, messages]) => {
-      const msgs = Array.isArray(messages) ? messages : [messages];
-      return msgs.map((m) => `${field} ${m}`);
-    });
+  if (
+    (data.errors || data.error) &&
+    typeof (data.errors || data.error) === "object"
+  ) {
+    return Object.entries(data.errors || data.error).flatMap(
+      ([field, messages]) => {
+        const msgs = Array.isArray(messages) ? messages : [messages];
+        return msgs.map((m) => `${field} ${m}`);
+      },
+    );
   }
 
   if (typeof data.error === "string") {

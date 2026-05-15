@@ -17,10 +17,10 @@ export const createAuthActions = ({ api, revalidateTag }: ActionDeps) => {
       const { data: res, error } = await api.auth.login.post(data);
 
       if (error) {
-        const serverMsg =
-          (error.value as any)?.error ?? (error.value as any)?.message;
-        const friendlyMsg = serverMsg ?? "Login failed";
-        return { data: null, error: friendlyMsg };
+        return {
+          data: null,
+          error: parseRailsErrors(error.value) || "Login failed",
+        };
       }
 
       return { data: res, error: null };
@@ -35,11 +35,11 @@ export const createAuthActions = ({ api, revalidateTag }: ActionDeps) => {
       };
 
       const { data: res, error } = await api.auth.signup.post(payload);
+
       if (error) {
-        const body = error.value as any;
         return {
           data: null,
-          error: parseRailsErrors(body) || "Signup failed",
+          error: parseRailsErrors(error.value) || "Signup failed",
         };
       }
       return { data: res, error: null };
