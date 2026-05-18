@@ -110,7 +110,7 @@ import { api } from "@/lib/api";
 export const useData = createUseData({ api });
 ```
 
-## Data Access Layer (`components-library-mtx/dal`)
+## Data Access Layer (`components-library-mtx/dal` - optional)
 
 The DAL is designed for server-side data fetching with built-in support for Next.js caching.
 
