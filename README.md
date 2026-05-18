@@ -14,7 +14,7 @@ bun add components-library-mtx
 
 Import the library's styles in your main CSS file (e.g., `globals.css` or `index.css`):
 
-```tsx
+```css
 @import "components-library-mtx/style.css";
 ```
 
