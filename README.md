@@ -1,4 +1,4 @@
-# Components Library MTX
+# Components Library
 
 A premium components library built with React, Tailwind CSS, and Framer Motion. This library provides a unified interface for UI components, API clients, Data Access Layers (DAL), and hooks, specifically optimized for Next.js applications.
 
