@@ -1,6 +1,6 @@
 {
   "name": "components-library-mtx",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A premium components library built with React, Tailwind CSS, and Framer Motion.",
   "type": "module",
   "main": "./dist/index.js",
