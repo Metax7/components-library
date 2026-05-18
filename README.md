@@ -1,231 +1,319 @@
 # Components Library MTX
 
-A premium, full-stack components library designed for modern React applications, specifically optimized for **Next.js 15+** using **Server Actions**, **Cache Components**, and **React Query**.
+A premium components library built with React, Tailwind CSS, and Framer Motion. This library provides a unified interface for UI components, API clients, Data Access Layers (DAL), and hooks, specifically optimized for Next.js applications.
 
-## 🚀 Features
-
-- **Next.js 15+ Ready**: Optimized for the latest Next.js features.
-- **Server Actions**: Type-safe mutation handling with built-in revalidation support.
-- **Cache Components**: Native support for `"use cache"` and `"use cache: private"` patterns.
-- **Universal Data Hook**: Flexible `useData` hook for client-side fetching with TanStack Query.
-- **Full-Stack Auth**: Built-in authentication actions and session management.
-- **Premium UI Components**: Sleek, accessible components built with Tailwind CSS and Framer Motion.
-
-## 📦 Installation
+## Installation
 
 ```bash
 bun add components-library-mtx
 ```
 
-## 🛠️ Next.js 15+ Setup Guide
+## Setup
 
-To get the most out of this library in a Next.js 15 environment, we recommend the following structure.
+### 1. Styles
 
-### 1. Configure API Clients
+Import the library's styles in your main entry point (e.g., `layout.tsx` or `_app.tsx`):
 
-Create separate client and server API instances to handle session tokens correctly.
+```tsx
+import "components-library-mtx/style.css";
+```
 
-```typescript
-// lib/api/client.ts (Client Side)
-import { createClient } from "components-library-mtx/api";
+### 2. Library Provider
 
-export const client = createClient({
+Wrap your application with the `LibraryProvider` to provide configuration to all components and hooks. You can use the `defineConfig` helper to easily define your configuration with type-safety and apply standard default settings (like `theme: "light"`, `rippleEffect: true`, and default component tags/wrappers).
+
+```tsx
+// app/providers.tsx
+"use client";
+
+import { LibraryProvider, defineConfig } from "components-library-mtx";
+import { useRouter } from "next/navigation";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  const config = defineConfig({
+    router,
+    enableDevtools: process.env.NODE_ENV === "development",
+  });
+
+  return <LibraryProvider config={config}>{children}</LibraryProvider>;
+}
+```
+
+## Infrastructure Setup
+
+### 1. API Route Handler (Next.js)
+
+The library includes a pre-configured [Elysia](https://elysiajs.com/) app factory that you can mount directly into a Next.js App Router route handler.
+
+```tsx
+// app/api/[[...slug]]/route.ts
+import { createApiApp } from "components-library-mtx/api/routes";
+
+const app = createApiApp({
   baseUrl: process.env.NEXT_PUBLIC_API_URL!,
   companyId: process.env.NEXT_PUBLIC_COMPANY_ID!,
 });
 
-// lib/api/server.ts (Server Side)
-import { createServerClient } from "components-library-mtx/api";
-import { cookies } from "next/headers";
-
-export const serverApi = createServerClient(
-  {
-    baseUrl: process.env.NEXT_PUBLIC_API_URL!,
-    companyId: process.env.NEXT_PUBLIC_COMPANY_ID!,
-  },
-  {
-    getAuthToken: async () => (await cookies()).get("auth_token")?.value,
-    setAuthToken: async (token) => {
-      (await cookies()).set("auth_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
-    },
-    removeAuthToken: async () => {
-      (await cookies()).delete("auth_token");
-    },
-  },
-);
+export const GET = app.fetch;
+export const POST = app.fetch;
+export const DELETE = app.fetch;
 ```
 
-### 2. Implement Data Access Layer (DAL)
+### 2. API Client (`components-library-mtx/api`)
 
-Leverage Next.js 15 Cache Components for efficient server-side data fetching.
+The API client is built on top of [Elysia Eden](https://elysiajs.com/eden/overview.html) and [ky](https://github.com/sindresorhus/ky).
 
-```typescript
-// lib/api/dal.ts
-"use cache: private";
+```tsx
+// lib/api.ts
+import { createClient, nextSync } from "components-library-mtx/api";
 
-import { createDal } from "components-library-mtx/dal";
-import { cacheLife, cacheTag } from "next/cache";
-import { serverApi } from "./server";
-
-const dal = createDal({
-  api: serverApi,
-  cacheLife: () => cacheLife("hours"),
-  cacheTag,
+export const api = createClient({
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL!,
+  hooks: nextSync(), // Automatically handles auth tokens in Next.js
 });
-
-export const getSession = async () => await dal.auth.getCurrentUser();
-export const getJewelries = async (params?: any) =>
-  await dal.jewelries.findMany(params);
-export const getStones = async (params?: any) =>
-  await dal.stones.findMany(params);
 ```
 
-### 3. Setup Server Actions
+### 3. Server Actions (`components-library-mtx/actions`)
 
-Create type-safe server actions for mutations like authentication or bookmarks.
+Define your server-side actions by injecting the API client and cache revalidation logic.
 
-```typescript
-// lib/api/actions.ts
+```tsx
+// lib/actions.ts
 "use server";
 
 import {
   createAuthActions,
   createBookmarkActions,
 } from "components-library-mtx/actions";
-import { updateTag } from "next/cache";
-import { serverApi } from "./server";
+import { revalidateTag } from "next/cache";
+import { api } from "./api";
 
-const deps = { api: serverApi, revalidateTag: updateTag };
+const deps = { api, revalidateTag };
 
 export const { signIn, signUp, signOut } = createAuthActions(deps);
 export const { toggleBookmark } = createBookmarkActions(deps);
 ```
 
-### 4. Setup Client Hooks
+### 4. Shared Hooks Setup (`components-library-mtx/hooks`)
 
-Initialize the `useData` hook for client-side interactions.
+Create a shared instance of the `useData` hook to be used throughout your client components.
 
-```typescript
+```tsx
 // hooks/use-data.ts
+"use client";
+
 import { createUseData } from "components-library-mtx/hooks";
-import { client } from "@/lib/api/client";
+import { api } from "@/lib/api";
+
+export const useData = createUseData({ api });
+```
+
+## Data Access Layer (`components-library-mtx/dal`)
+
+The DAL is designed for server-side data fetching with built-in support for Next.js caching.
+
+```tsx
+// lib/dal.ts
+"use cache: private";
+
 import { createDal } from "components-library-mtx/dal";
+import { cacheLife, cacheTag } from "next/cache";
+import { api } from "./api";
 
-// Minimal DAL for client-side hooks (no caching needed here as Query handles it)
-const clientDal = createDal({ api: client });
-
-export const useData = createUseData({
-  api: client,
-  dal: clientDal,
+export const dal = createDal({
+  api,
+  cacheLife: (profile) => cacheLife(profile),
+  cacheTag,
 });
+
+// Example usage
+export const getSession = async () => await dal.auth.getCurrentUser();
 ```
 
-### 5. Configure Root Provider
+## Client-side Usage
 
-Wrap your application in the `LibraryProvider` to enable React Query and the configuration.
+### Data Fetching with `useData`
 
-```tsx
-// app/providers.tsx
-"use client";
-
-import { LibraryProvider } from "components-library-mtx";
-import { useRouter } from "next/navigation";
-import "@components-library-mtx/style.css";
-
-export default function Providers({ children }) {
-  const router = useRouter();
-
-  return (
-    <LibraryProvider
-      config={{
-        router,
-        showDevTools: process.env.NODE_ENV === "development",
-      }}
-    >
-      {children}
-    </LibraryProvider>
-  );
-}
-```
+The `useData` hook provides a type-safe way to fetch resources from the API.
 
 ```tsx
-// app/layout.tsx
-import Providers from "./providers";
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
-}
-```
-
-## 📖 Usage Examples
-
-### Fetching in Server Components (using DAL)
-
-```tsx
-import { getJewelries } from "@/lib/api/dal";
-
-export default async function Page() {
-  const jewelries = await getJewelries({ per_page: 10 });
-
-  return <div>{/* Render your data */}</div>;
-}
-```
-
-### Fetching in Client Components (using useData)
-
-```tsx
-"use client";
-
 import { useData } from "@/hooks/use-data";
 
-export function JewelryList() {
+export function MyComponent() {
   const { data, isLoading } = useData({
     resource: "jewelries",
-    params: { category: "Rings" },
+    params: { page: 1, per_page: 20 },
   });
 
   if (isLoading) return <div>Loading...</div>;
-
-  return <div>{/* Render data */}</div>;
+  return <div>Found {data?.data.length} items</div>;
 }
 ```
 
-### Using Server Actions
+#### Supported Resources
+
+| Resource     | Description                                       | Returns                                                                                        |
+| :----------- | :------------------------------------------------ | :--------------------------------------------------------------------------------------------- |
+| `session`    | Get current user session.                         | [`User`](./src/api/types.ts#L251) \| null                                                      |
+| `bookmarks`  | Get user bookmarks.                               | [`BookmarkResponse`](./src/api/types.ts#L243) \| null                                          |
+| `jewelries`  | Search and list jewelry items.                    | [`JewelryResponse`](./src/api/types.ts#L114)                                                   |
+| `stones`     | Search and list stones/diamonds.                  | [`StoneResponse`](./src/api/types.ts#L203)                                                     |
+| `properties` | Get filter properties (categories, metals, etc.). | [`JewelryProperties`](./src/api/types.ts#L281) \| [`StoneProperties`](./src/api/types.ts#L297) |
+| `quotes`     | List user quotes.                                 | [`QuoteResponse`](./src/api/types.ts#L227)                                                     |
+
+### Form Handling with `useFormAction`
+
+Seamlessly integrate `react-hook-form` with Next.js Server Actions.
+
+```tsx
+import { useFormAction } from "components-library-mtx/hooks";
+import { signIn } from "@/lib/actions"; // Your server action
+import { loginSchema } from "@/lib/schemas";
+
+export function LoginForm() {
+  const { form, onSubmit, isPending } = useFormAction({
+    action: signIn,
+    schema: loginSchema,
+    defaultValues: {
+      email: "",
+    },
+    onSuccess: () => router.push("/dashboard"),
+  });
+
+  return (
+    <form onSubmit={onSubmit}>
+      <input {...form.register("email")} />
+      <button type="submit" disabled={isPending}>
+        Login
+      </button>
+    </form>
+  );
+}
+```
+
+### Bookmark Management
+
+Example of using `useToggleBookmark` mutation hook.
 
 ```tsx
 "use client";
 
-import { toggleBookmark } from "@/lib/api/actions";
-import { toast } from "sonner";
 import { useToggleBookmark } from "components-library-mtx/hooks";
+import { toggleBookmark } from "@/lib/actions";
+import { useData } from "@/hooks/use-data";
 
-export function BookmarkButton({ item }) {
+export function BookmarksList() {
+  const { data: bookmarks } = useData({ resource: "bookmarks" });
   const { mutate, isPending } = useToggleBookmark(toggleBookmark);
 
   return (
-    <button
-      onClick={() =>
-        mutate({
-          id: item.type === "diamond" ? item.stone_id! : item.jewelry_id!,
-          type: item.type as "stone" | "jewelry" | "diamond",
-          isBookmarked: true,
-        })
-      }
-      disabled={isPending}
-    >
-      Save
-    </button>
+    <div>
+      {bookmarks?.data.map((bookmark) => (
+        <div key={bookmark.id}>
+          {bookmark.item.item_no}
+          <button
+            disabled={isPending}
+            onClick={() =>
+              mutate({
+                id: bookmark.stone_id || bookmark.jewelry_id,
+                type: bookmark.item.type,
+                isBookmarked: true,
+              })
+            }
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Filter Hooks
+
+Manage complex search and filter states in the URL automatically. These hooks leverage [`nuqs`](https://nuqs.47ng.com/)'s `useQueryStates` under the hood to parse, serialize, and synchronize UI state with the browser query string in a type-safe manner.
+
+They return a `[filters, setFilters]` tuple, where:
+
+- **`filters`**: An object containing the current URL parameters (all typed as strings or floats).
+- **`setFilters`**: A function to update the query state, which accepts partial updates or `null` to clear a parameter from the URL.
+
+- [`useJewelryFilters()`](./src/hooks/use-jewelry-filters.ts): Manages URL filters for jewelry searches (categories, metals, sizes, prices, weights, etc.).
+- [`useStoneFilters()`](./src/hooks/use-stone-filters.ts): Manages URL filters for loose stones/diamonds (shape, color, clarity, cut, carats, etc.).
+
+#### Example Usage
+
+Here is how you can use `useJewelryFilters` in combination with the `useData` hook to implement a real-time, URL-synced search interface:
+
+```tsx
+"use client";
+
+import { useJewelryFilters } from "components-library-mtx/hooks";
+import { useData } from "@/hooks/use-data";
+
+export function JewelrySearch() {
+  const [filters, setFilters] = useJewelryFilters();
+
+  // Pass the URL filter state directly to useData as query params
+  const { data, isLoading } = useData({
+    resource: "jewelries",
+    params: filters,
+  });
+
+  return (
+    <div className="space-y-4">
+      {/* Search Input synced with URL 'item_no' */}
+      <input
+        type="text"
+        placeholder="Search item no..."
+        value={filters.item_no ?? ""}
+        onChange={(e) => setFilters({ item_no: e.target.value || null })}
+        className="border p-2 rounded"
+      />
+
+      {/* Category Dropdown synced with URL 'category' */}
+      <select
+        value={filters.category ?? ""}
+        onChange={(e) => setFilters({ category: e.target.value || null })}
+        className="border p-2 rounded ml-2"
+      >
+        <option value="">All Categories</option>
+        <option value="Rings">Rings</option>
+        <option value="Necklaces">Necklaces</option>
+      </select>
+
+      {isLoading ? (
+        <div>Loading items...</div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {data?.data?.map((item) => (
+            <div key={item.id} className="border p-4 rounded">
+              <h3>{item.item_no}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Components (`components-library-mtx/button`)
+
+Basic UI components following a consistent design system.
+
+```tsx
+import { Button } from "components-library-mtx/button";
+
+export function Example() {
+  return (
+    <Button variant="primary" size="lg" onClick={() => console.log("Clicked!")}>
+      Click Me
+    </Button>
   );
 }
 ```
