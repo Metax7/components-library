@@ -223,7 +223,7 @@ export function StoneList() {
               })
             }
           >
-            {stone.isBookmarked ? "Save" : "Remove"}
+            {stone.isBookmarked ? "Remove" : "Save"}
           </button>
         </div>
       ))}
