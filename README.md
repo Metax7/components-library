@@ -12,10 +12,10 @@ bun add components-library-mtx
 
 ### 1. Styles
 
-Import the library's styles in your main entry point (e.g., `layout.tsx` or `_app.tsx`):
+Import the library's styles in your main CSS file (e.g., `globals.css` or `index.css`):
 
 ```tsx
-import "components-library-mtx/style.css";
+@import "components-library-mtx/style.css";
 ```
 
 ### 2. Library Provider
