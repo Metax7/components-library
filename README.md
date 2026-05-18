@@ -204,26 +204,26 @@ import { useToggleBookmark } from "components-library-mtx/hooks";
 import { toggleBookmark } from "@/lib/actions";
 import { useData } from "@/hooks/use-data";
 
-export function BookmarksList() {
-  const { data: bookmarks } = useData({ resource: "bookmarks" });
+export function StoneList() {
+  const { data: stones } = useData({ resource: "stones" });
   const { mutate, isPending } = useToggleBookmark(toggleBookmark);
 
   return (
     <div>
-      {bookmarks?.data.map((bookmark) => (
-        <div key={bookmark.id}>
-          {bookmark.item.item_no}
+      {stones?.data.map((stone) => (
+        <div key={stone.id}>
+          {stone.item_no}
           <button
             disabled={isPending}
             onClick={() =>
               mutate({
-                id: bookmark.stone_id || bookmark.jewelry_id,
-                type: bookmark.item.type,
-                isBookmarked: true,
+                id: stone.id,
+                type: "stone,
+                isBookmarked: stone.is_bookmarked,
               })
             }
           >
-            Remove
+            {stone.isBookmarked ? "Save" : "Remove"}
           </button>
         </div>
       ))}
