@@ -1,136 +1,24 @@
 {
-  "name": "components-library-mtx",
-  "version": "1.0.5",
-  "description": "A premium components library built with React, Tailwind CSS, and Framer Motion.",
+  "name": "components-library-monorepo",
+  "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./button": {
-      "types": "./dist/components/Button.d.ts",
-      "import": "./dist/components/Button.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js"
-    },
-    "./providers": {
-      "types": "./dist/providers/LibraryProvider.d.ts",
-      "import": "./dist/providers/LibraryProvider.js"
-    },
-    "./api": {
-      "types": "./dist/api/index.d.ts",
-      "import": "./dist/api/index.js"
-    },
-    "./api/routes": {
-      "types": "./dist/api/routes/index.d.ts",
-      "import": "./dist/api/routes/index.js"
-    },
-    "./actions": {
-      "types": "./dist/actions/index.d.ts",
-      "import": "./dist/actions/index.js"
-    },
-    "./hooks": {
-      "types": "./dist/hooks/index.d.ts",
-      "import": "./dist/hooks/index.js"
-    },
-    "./dal": {
-      "types": "./dist/dal/index.d.ts",
-      "import": "./dist/dal/index.js"
-    },
-    "./style.css": "./dist/index.css"
-  },
-  "sideEffects": [
-    "**/*.css"
-  ],
-  "files": [
-    "dist"
+  "packageManager": "bun@1.3.14",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "dev": "tsdown --watch",
-    "build:js": "tsdown",
-    "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
-    "build": "bun run build:js && bun run build:css",
-    "prepare": "bun run build",
-    "prepublishOnly": "bun run build",
-    "test": "bun test",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "chromatic": "bunx chromatic --exit-zero-on-changes"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "storybook": "turbo run storybook --filter=storybook-app",
+    "build-storybook": "turbo run build-storybook --filter=storybook-app",
+    "chromatic": "turbo run chromatic --filter=storybook-app"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.3",
-    "@storybook/addon-a11y": "^10.1.10",
-    "@storybook/addon-docs": "^10.1.10",
-    "@storybook/addon-vitest": "^10.1.10",
-    "@storybook/react-vite": "^10.1.10",
-    "@tailwindcss/postcss": "^4.0.0",
-    "@tailwindcss/vite": "^4.1.18",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@vitest/browser-playwright": "^4.0.16",
-    "@vitest/coverage-v8": "^4.0.16",
-    "chromatic": "^13.3.4",
-    "playwright": "^1.57.0",
-    "postcss": "^8.4.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "storybook": "^10.1.10",
-    "tailwindcss": "^4.0.0",
-    "tsdown": "^0.18.3",
-    "vite-tsconfig-paths": "^6.0.3",
-    "@tanstack/react-query-devtools": "^5.100.9",
-    "vitest": "^4.0.16"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": ">=13.0.0",
-    "@tanstack/react-query": "^5.100.9"
-  },
-  "peerDependenciesMeta": {
-    "next": {
-      "optional": true
-    }
-  },
-  "dependencies": {
-    "@elysia/eden": "^1.4.10",
-    "@hookform/resolvers": "^5.2.2",
-    "@sinclair/typebox": "^0.34.49",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "elysia": "^1.4.28",
-    "ky": "^2.0.2",
-    "nuqs": "^2.8.9",
-    "react-hook-form": "^7.75.0",
-    "sonner": "^2.0.7",
-    "tailwind-merge": "^3.4.0",
-    "yup": "^1.7.1",
-    "zod": "^4.4.3"
+    "turbo": "^2.4.4"
   },
   "engines": {
     "bun": "^1.3"
-  },
-  "license": "MIT",
-  "author": "Metax",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Metax7/components-library.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Metax7/components-library/issues"
-  },
-  "homepage": "https://github.com/Metax7/components-library#readme",
-  "keywords": [
-    "react",
-    "components",
-    "ui-library",
-    "tailwind",
-    "framer-motion"
-  ]
+  }
 }
