@@ -1,0 +1,30 @@
+{
+  "folders": [
+    {
+      "name": "Root (Monorepo)",
+      "path": ".",
+    },
+    {
+      "name": "Next.js Web App (better-wdpro)",
+      "path": "apps/web",
+    },
+    {
+      "name": "Storybook Sandbox",
+      "path": "apps/storybook",
+    },
+    {
+      "name": "Core Library Components",
+      "path": "packages/core",
+    },
+  ],
+  "settings": {
+    // Shared workspace settings can be placed here
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "search.exclude": {
+      "**/.turbo": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/storybook-static": true,
+    },
+  },
+}

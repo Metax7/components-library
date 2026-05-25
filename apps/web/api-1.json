@@ -1,0 +1,2709 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WD Online API",
+    "version": "v1",
+    "description": "WD Online API Documentation"
+  },
+  "paths": {
+    "/api/login": {
+      "post": {
+        "summary": "Sign in",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Signed In"
+          },
+          "401": {
+            "description": "Invalid Credentials"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "company_id": {
+                        "type": "integer"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "company_id",
+                      "email",
+                      "password"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "delete": {
+        "summary": "Sign out",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signed out"
+          }
+        }
+      }
+    },
+    "/api/signup": {
+      "post": {
+        "summary": "Sign up",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Signed Up"
+          },
+          "403": {
+            "description": "registration disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company Not Found"
+          },
+          "422": {
+            "description": "Invalid Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "errors"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "company_id": {
+                        "type": "integer"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      },
+                      "password_confirmation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "company_id",
+                      "full_name",
+                      "email",
+                      "password",
+                      "password_confirmation"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Reset Instructions Sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Reset instructions sent"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Company ID is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company ID is required"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "company_id": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "email",
+                      "company_id"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update password",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Password Updated"
+          },
+          "422": {
+            "description": "Invalid Token or Password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "errors"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "reset_password_token": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      },
+                      "password_confirmation": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "reset_password_token",
+                      "password",
+                      "password_confirmation"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookmarks": {
+      "get": {
+        "summary": "List all bookmarks for current user",
+        "tags": [
+          "Bookmarks"
+        ],
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmarks Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Bookmark Created"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "stone_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "jewelry_id"
+                    ]
+                  }
+                ],
+                "description": "Either stone_id or jewelry_id is required"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookmarks/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Bookmark Updated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "stone_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "jewelry_id"
+                    ]
+                  }
+                ],
+                "description": "Either stone_id or jewelry_id is required"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Bookmark Deleted"
+          },
+          "204": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "description": "Provide either stone_id or jewelry_id to delete"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart_items": {
+      "get": {
+        "summary": "List all cart items for current user",
+        "tags": [
+          "Cart Items"
+        ],
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart Items Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new cart item",
+        "tags": [
+          "Cart Items"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Cart Item Created"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "stone_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "jewelry_id"
+                    ]
+                  }
+                ],
+                "description": "Either stone_id or jewelry_id is required"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart_items/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a cart item",
+        "tags": [
+          "Cart Items"
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart Item Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a cart item",
+        "tags": [
+          "Cart Items"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cart Item Updated"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "stone_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "jewelry_id"
+                    ]
+                  }
+                ],
+                "description": "Either stone_id or jewelry_id is required"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a cart item",
+        "tags": [
+          "Cart Items"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cart Item Deleted"
+          },
+          "204": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stone_id": {
+                    "type": "integer"
+                  },
+                  "jewelry_id": {
+                    "type": "integer"
+                  }
+                },
+                "description": "Provide either stone_id or jewelry_id to delete"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/featured-items": {
+      "get": {
+        "summary": "Get featured items for a company",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Featured Items Returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "diamonds": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "jewelry": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/verify-items": {
+      "post": {
+        "summary": "Verify if items exist and are available",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items Verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "index": {
+                            "type": "integer"
+                          },
+                          "error": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "status": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing Items Parameter"
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "diamond",
+                            "jewelry"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/jewelry-properties": {
+      "get": {
+        "summary": "Get available jewelry filter options",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Filter by jewelry category",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sub_category",
+            "in": "query",
+            "required": false,
+            "description": "Filter by jewelry sub-category",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jewelry Properties Returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "object"
+                    },
+                    "design": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "model": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metal_color": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metal_karat": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metal_type": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "size": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "stone_shape": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "stone_type": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metal_weight_max": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "metal_weight_min": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "price_max": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "price_min": {
+                      "type": "number",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/stone-properties": {
+      "get": {
+        "summary": "Get available stone filter options",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stone Properties Returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "clarity": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "color": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cut": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "fluorescence": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lab": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "polish": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "shape": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "stone_type": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "symmetry": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "carats_max": {
+                      "type": "number"
+                    },
+                    "carats_min": {
+                      "type": "number"
+                    },
+                    "depth_max": {
+                      "type": "number"
+                    },
+                    "depth_min": {
+                      "type": "number"
+                    },
+                    "price_max": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "price_min": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "table_max": {
+                      "type": "number"
+                    },
+                    "table_min": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/submit-contact-form": {
+      "post": {
+        "summary": "Submit a contact form",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contact Form Submitted"
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/submit-inquiry-form": {
+      "post": {
+        "summary": "Submit an inquiry form for items",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inquiry Form Submitted"
+          },
+          "404": {
+            "description": "Company Not Found"
+          },
+          "422": {
+            "description": "Validation Error (Missing Email)"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "item_type": {
+                    "type": "string",
+                    "enum": [
+                      "diamond",
+                      "jewelry"
+                    ],
+                    "description": "Item type (single item inquiry)"
+                  },
+                  "item_id": {
+                    "type": "string",
+                    "description": "Item ID (single item inquiry)"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "description": "Items array (multi-item inquiry)",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "item_type": {
+                          "type": "string",
+                          "enum": [
+                            "diamond",
+                            "jewelry"
+                          ]
+                        },
+                        "item_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "item_type",
+                        "item_id"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "email"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/company_settings": {
+      "parameters": [
+        {
+          "name": "company_id",
+          "in": "path",
+          "description": "Company ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "List all company settings for a company",
+        "tags": [
+          "Company Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Company Settings Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/company_settings/{id}": {
+      "parameters": [
+        {
+          "name": "company_id",
+          "in": "path",
+          "description": "Company ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Company setting ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a company setting",
+        "tags": [
+          "Company Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Company Setting Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/jewelries": {
+      "get": {
+        "summary": "Retrieves all jewelries",
+        "tags": [
+          "Jewelries"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Company ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "description": "Items per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Sort by field (e.g., entered_at, item_no, price)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction (asc, desc)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item_no",
+            "in": "query",
+            "required": false,
+            "description": "Filter by item number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "Search by description",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Filter by category (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sub_category",
+            "in": "query",
+            "required": false,
+            "description": "Filter by sub-category (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "certified_only",
+            "in": "query",
+            "required": false,
+            "description": "Only certified jewelries",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "only_diamonds",
+            "in": "query",
+            "required": false,
+            "description": "Only diamond jewelries",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "only_gemstones",
+            "in": "query",
+            "required": false,
+            "description": "Only gemstone jewelries",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "only_fancy_diamonds",
+            "in": "query",
+            "required": false,
+            "description": "Only jewelries with fancy diamonds",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "stone_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by stone types (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stone_color",
+            "in": "query",
+            "required": false,
+            "description": "Filter by stone color codes (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stone_shape",
+            "in": "query",
+            "required": false,
+            "description": "Filter by stone shape codes (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metal_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by metal types (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metal_color",
+            "in": "query",
+            "required": false,
+            "description": "Filter by metal colors (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metal_karat",
+            "in": "query",
+            "required": false,
+            "description": "Filter by metal karats (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metal_weight_min",
+            "in": "query",
+            "required": false,
+            "description": "Minimum metal weight",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "metal_weight_max",
+            "in": "query",
+            "required": false,
+            "description": "Maximum metal weight",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "on_hand",
+            "in": "query",
+            "required": false,
+            "description": "Only items on hand",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "description": "Filter by size (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "required": false,
+            "description": "Filter by gender",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "design",
+            "in": "query",
+            "required": false,
+            "description": "Filter by design (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "description": "Filter by model (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "style",
+            "in": "query",
+            "required": false,
+            "description": "Filter by style (comma separated)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "required": false,
+            "description": "Minimum price",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "required": false,
+            "description": "Maximum price",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jewelries Found"
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/jewelries/{id}": {
+      "get": {
+        "summary": "Retrieves a single jewelry",
+        "tags": [
+          "Jewelries"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Jewelry ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Company ID (required if item_no is used)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jewelry Found"
+          },
+          "404": {
+            "description": "Jewelry Not Found"
+          }
+        }
+      }
+    },
+    "/api/jewelries/{jewelry_id}/similar": {
+      "get": {
+        "summary": "Retrieves similar jewelries",
+        "tags": [
+          "Jewelries"
+        ],
+        "parameters": [
+          {
+            "name": "jewelry_id",
+            "in": "path",
+            "description": "Jewelry ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Company ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Similar Jewelries Found"
+          },
+          "404": {
+            "description": "Jewelry Not Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/jewelry-similar/{id}": {
+      "get": {
+        "summary": "Retrieves similar jewelries (via Company)",
+        "tags": [
+          "Jewelries"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Jewelry ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Similar Jewelries Found"
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "summary": "List all orders",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new order",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Job Scheduled"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "company_id": {
+                    "type": "integer"
+                  },
+                  "stripe_checkout_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "stripe_checkout_id"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve an order",
+        "tags": [
+          "Orders"
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/quotes": {
+      "get": {
+        "summary": "List all quotes",
+        "tags": [
+          "Quotes"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quotes Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new quote",
+        "tags": [
+          "Quotes"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Quote Created"
+          },
+          "403": {
+            "description": "Forbidden Other Company"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "company_id",
+                  "item_ids"
+                ],
+                "properties": {
+                  "company_id": {
+                    "type": "integer"
+                  },
+                  "customer_notes": {
+                    "type": "string"
+                  },
+                  "item_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "jewelry_id": {
+                          "type": "integer"
+                        },
+                        "stone_id": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quotes/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a quote",
+        "tags": [
+          "Quotes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a quote",
+        "tags": [
+          "Quotes"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Quote Updated"
+          },
+          "403": {
+            "description": "Forbidden Other Company"
+          },
+          "404": {
+            "description": "Quote Not Found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "company_notes": {
+                    "type": "string"
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a quote",
+        "tags": [
+          "Quotes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote Deleted"
+          },
+          "403": {
+            "description": "Cannot Delete Other User Quote"
+          },
+          "404": {
+            "description": "Quote Not Found"
+          }
+        }
+      }
+    },
+    "/api/stones": {
+      "get": {
+        "summary": "Retrieves all stones",
+        "tags": [
+          "Stones"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Company",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Per page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Sort by",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Sort dir",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item_no",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Item no",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "on_hand",
+            "in": "query",
+            "required": false,
+            "description": "Filter by On hand",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "only_diamonds",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Only diamonds",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "only_gemstones",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Only gemstones",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "carats_min",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Carats min",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "carats_max",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Carats max",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "clarity",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Clarity",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Color",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cut",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Cut",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "depth_min",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Depth min",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "depth_max",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Depth max",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "fluorescence",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Fluorescence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lab",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Lab",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "polish",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Polish",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Price min",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Price max",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "shape",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Shape",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stone_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Stone type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "symmetry",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Symmetry",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table_min",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Table min",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "table_max",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Table max",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "Filter by Description",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stones Found"
+          },
+          "404": {
+            "description": "Company Not Found"
+          }
+        }
+      }
+    },
+    "/api/stones/{id}": {
+      "get": {
+        "summary": "Retrieves a single stone",
+        "tags": [
+          "Stones"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Stone ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Company ID (required if item_no is used)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stone Found"
+          },
+          "404": {
+            "description": "Stone Not Found"
+          }
+        }
+      }
+    },
+    "/api/stones/{stone_id}/similar": {
+      "get": {
+        "summary": "Retrieves similar stones",
+        "tags": [
+          "Stones"
+        ],
+        "parameters": [
+          {
+            "name": "stone_id",
+            "in": "path",
+            "description": "Stone ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "required": false,
+            "description": "Company ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Similar Stones Found"
+          },
+          "404": {
+            "description": "Stone Not Found"
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/stone-similar/{id}": {
+      "get": {
+        "summary": "Retrieves similar stones (via Company)",
+        "tags": [
+          "Stones"
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Stone ID or Item No",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Similar Stones Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "List all users",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users Found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a user",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User Found"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}/permissions": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "List user permissions",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissions Found"
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}/toggle-permission/{id}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Permission ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Toggle user permission",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Permission Toggled"
+          }
+        }
+      }
+    },
+    "/api/activate/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Activate a user",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User Activated"
+          }
+        }
+      }
+    },
+    "/api/deactivate/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Deactivate a user",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User Deactivated"
+          }
+        }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "summary": "Retrieve current user profile",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile Found"
+          }
+        }
+      }
+    },
+    "/api/profile/email": {
+      "patch": {
+        "summary": "Update current user email",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Email Updated"
+          },
+          "401": {
+            "description": "Invalid Password"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user"
+                ],
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "current_password"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "example": "new@example.com"
+                      },
+                      "current_password": {
+                        "type": "string",
+                        "example": "Password123!"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/full-name": {
+      "patch": {
+        "summary": "Update current user full name",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Name Updated"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user"
+                ],
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "required": [
+                      "full_name",
+                      "current_password"
+                    ],
+                    "properties": {
+                      "full_name": {
+                        "type": "string",
+                        "example": "New Name"
+                      },
+                      "current_password": {
+                        "type": "string",
+                        "example": "Password123!"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/password": {
+      "patch": {
+        "summary": "Update current user password",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Password Updated"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user"
+                ],
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "required": [
+                      "password",
+                      "password_confirmation",
+                      "current_password"
+                    ],
+                    "properties": {
+                      "password": {
+                        "type": "string",
+                        "example": "NewPassword123!"
+                      },
+                      "password_confirmation": {
+                        "type": "string",
+                        "example": "NewPassword123!"
+                      },
+                      "current_password": {
+                        "type": "string",
+                        "example": "Password123!"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/first-login": {
+      "post": {
+        "summary": "First login for a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "First Login Handled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "user_not_found",
+                        "user_can_login",
+                        "user_password_email_sent"
+                      ]
+                    }
+                  },
+                  "description": "Status indicates the result: user_not_found, user_can_login, or user_password_email_sent"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "company_id"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "company_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
