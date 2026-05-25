@@ -5,12 +5,6 @@ A premium components library built with React, Tailwind CSS, and Framer Motion. 
 ## Installation
 
 ```bash
-bun create wdpro-app
-```
-
-## Manual Installation
-
-```bash
 bun add components-library-mtx
 ```
 
