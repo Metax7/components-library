@@ -11,34 +11,56 @@ async function main() {
   console.clear();
   intro(color.bgCyan(color.black(" Create My Next App ")));
 
-  // 1. Ask for the project/directory name
-  const projectName = await text({
-    message: "What is the name of your project?",
-    placeholder: "my-awesome-next-app",
-    validate(value) {
-      if (value.length === 0) return "Project name cannot be empty!";
-    },
-  });
+  // 1. Get or ask for the project/directory name
+  let projectName = process.argv[2];
 
-  if (typeof projectName === "symbol") {
-    outro(color.red("Operation cancelled."));
-    process.exit(0);
+  if (!projectName) {
+    projectName = await text({
+      message: "What is the name of your project?",
+      placeholder: "my-awesome-next-app",
+      validate(value) {
+        if (value.length === 0) return "Project name cannot be empty!";
+      },
+    });
+
+    if (typeof projectName === "symbol") {
+      outro(color.red("Operation cancelled."));
+      process.exit(0);
+    }
   }
 
-  const targetDir = path.join(process.cwd(), projectName);
+  // Handle current directory "." shortcut
+  const isCurrentDir = projectName === ".";
+  const targetDir = isCurrentDir
+    ? process.cwd()
+    : path.join(process.cwd(), projectName);
 
-  // Check if directory already exists
-  if (fs.existsSync(targetDir)) {
+  // If it's a specific folder name, check if it already exists
+  if (!isCurrentDir && fs.existsSync(targetDir)) {
     outro(color.red(`Directory "${projectName}" already exists!`));
     process.exit(1);
   }
+
+  // If it's current dir, check if it contains conflicting files (optional but safe)
+  if (isCurrentDir && fs.existsSync(path.join(targetDir, "package.json"))) {
+    outro(color.red(`Current directory already contains a package.json!`));
+    process.exit(1);
+  }
+
+  // Determine the actual project name for package.json
+  const finalProjectName = isCurrentDir
+    ? path.basename(process.cwd())
+    : projectName;
+
+  console.log(
+    `${color.cyan("»")} Target directory: ${color.green(isCurrentDir ? "./ (Current Directory)" : projectName)}`,
+  );
 
   const s = spinner();
   s.start("Downloading the latest template from GitHub...");
 
   try {
     // 2. Download template from GitHub
-    // Using the user's provided template repository
     await downloadTemplate(
       "github:Metax7/components-library/templates/next-app",
       {
@@ -53,11 +75,11 @@ async function main() {
     process.exit(1);
   }
 
-  // 3. Update package.json with the new project name
+  // 3. Update package.json with the correct valid project name
   const pkgPath = path.join(targetDir, "package.json");
   if (fs.existsSync(pkgPath)) {
     const pkg = await fs.readJson(pkgPath);
-    pkg.name = projectName;
+    pkg.name = finalProjectName; // Here we use the clean folder name instead of "."
     await fs.writeJson(pkgPath, pkg, { spaces: 2 });
   }
 

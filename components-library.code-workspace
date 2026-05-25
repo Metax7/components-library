@@ -16,6 +16,10 @@
       "name": "Core Library Components",
       "path": "packages/core",
     },
+    {
+      "name": "Scaffold Script",
+      "path": "packages/create-wdpro-app",
+    },
   ],
   "settings": {
     // Shared workspace settings can be placed here
