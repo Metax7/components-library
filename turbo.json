@@ -18,7 +18,8 @@
       "persistent": true
     },
     "build-storybook": {
-      "outputs": ["storybook-static/**"]
+      "outputs": ["storybook-static/**"],
+      "env": ["STORYBOOK_BASE_PATH"]
     },
     "chromatic": {
       "dependsOn": ["build-storybook"],
