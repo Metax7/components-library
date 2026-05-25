@@ -1,4 +1,4 @@
-import { Geist_Mono, Noto_Sans, Playfair_Display } from "next/font/google"
+import { Geist } from "next/font/google"
 import { Metadata } from "next"
 
 import Providers from "./providers"
@@ -6,16 +6,9 @@ import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-const playfairDisplayHeading = Playfair_Display({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-heading",
-})
-
-const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-sans" })
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-sans",
 })
 
 export const metadata: Metadata = {
@@ -32,18 +25,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        fontMono.variable,
-        "font-sans",
-        notoSans.variable,
-        playfairDisplayHeading.variable
-      )}
+      className={cn("antialiased", geist.variable)}
     >
       <body>
-        <Providers>
-            {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
