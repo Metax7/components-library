@@ -9,7 +9,7 @@ import { downloadTemplate } from "giget";
 
 async function main() {
   console.clear();
-  intro(color.bgCyan(color.black(" Create My WDPRO App ")));
+  intro(color.bgCyan(color.black(" Create WDPRO App ")));
 
   // 1. Get or ask for the project/directory name
   let projectName = process.argv[2];
@@ -17,7 +17,7 @@ async function main() {
   if (!projectName) {
     projectName = await text({
       message: "What is the name of your project?",
-      placeholder: "my-awesome-next-app",
+      placeholder: "my-wdpro-app",
       validate(value) {
         if (value.length === 0) return "Project name cannot be empty!";
       },
