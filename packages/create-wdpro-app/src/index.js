@@ -9,7 +9,7 @@ import { downloadTemplate } from "giget";
 
 async function main() {
   console.clear();
-  intro(color.bgCyan(color.black(" Create My Next App ")));
+  intro(color.bgCyan(color.black(" Create My WDPRO App ")));
 
   // 1. Get or ask for the project/directory name
   let projectName = process.argv[2];
