@@ -83,6 +83,24 @@ async function main() {
     await fs.writeJson(pkgPath, pkg, { spaces: 2 });
   }
 
+  s.start("Creating .env file...");
+  try {
+    const envContent = [
+      "NEXT_PUBLIC_API_URL=https://api-staging.wdpro.app/api",
+      "NEXT_PUBLIC_BASE_URL=http://localhost:3000",
+      "NEXT_PUBLIC_COMPANY_ID=1",
+      "",
+    ].join("\n");
+
+    const envPath = path.join(targetDir, ".env");
+    await fs.writeFile(envPath, envContent, "utf8");
+    s.stop(".env file created with default values!");
+  } catch (err) {
+    s.stop(
+      color.yellow("Failed to create .env file. You can create it manually."),
+    );
+  }
+
   // 4. Ask for the preferred package manager
   const pkgManager = await select({
     message: "Which package manager would you like to use?",
