@@ -1,26 +1,279 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*******************************************************************************
+* Margin
+*******************************************************************************/
+
+@utility t-ml {
+  @apply ml-8;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@utility t-ml-half {
+  @apply ml-4;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility t-mr {
+  @apply mr-8;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility t-mr-half {
+  @apply mr-4;
+}
+
+@utility t-mx {
+  @apply t-ml;
+  @apply t-mr;
+}
+
+@utility t-mx-half {
+  @apply t-ml-half;
+  @apply t-mr-half;
+}
+
+@utility t-mt {
+  @apply mt-8;
+}
+
+@utility t-mt-half {
+  @apply mt-4;
+}
+
+@utility t-mb {
+  @apply mb-8;
+}
+
+@utility t-mb-half {
+  @apply mb-4;
+}
+
+@utility t-my {
+  @apply t-mt;
+  @apply t-mb;
+}
+
+@utility t-my-half {
+  @apply t-mt-half;
+  @apply t-mb-half;
+}
+
+@utility t-m {
+  @apply t-mx;
+  @apply t-my;
+}
+
+@utility t-m-half {
+  @apply t-mx-half;
+  @apply t-my-half;
+}
+
+/*******************************************************************************
+* Padding
+*******************************************************************************/
+
+@utility t-pl {
+  @apply pl-8;
+}
+
+@utility t-pl-half {
+  @apply pl-4;
+}
+
+@utility t-pr {
+  @apply pr-8;
+}
+
+@utility t-pr-half {
+  @apply pr-4;
+}
+
+@utility t-px {
+  @apply t-pl;
+  @apply t-pr;
+}
+
+@utility t-px-half {
+  @apply t-pl-half;
+  @apply t-pr-half;
+}
+
+@utility t-pt {
+  @apply pt-8;
+}
+
+@utility t-pt-half {
+  @apply pt-4;
+}
+
+@utility t-pb {
+  @apply pb-8;
+}
+
+@utility t-pb-half {
+  @apply pb-4;
+}
+
+@utility t-py {
+  @apply t-pt;
+  @apply t-pb;
+}
+
+@utility t-py-half {
+  @apply t-pt-half;
+  @apply t-pb-half;
+}
+
+@utility t-p {
+  @apply t-px;
+  @apply t-py;
+}
+
+@utility t-p-half {
+  @apply t-px-half;
+  @apply t-py-half;
+}
+
+@utility t-section-py {
+  @apply t-py-half xl:py-16;
+}
+
+/*******************************************************************************
+* Gap
+*******************************************************************************/
+
+@utility t-gap-x {
+  @apply gap-x-8;
+}
+
+@utility t-gap-x-half {
+  @apply gap-x-4;
+}
+
+@utility t-gap-y {
+  @apply gap-y-8;
+}
+
+@utility t-gap-y-half {
+  @apply gap-y-4;
+}
+
+@utility t-gap {
+  @apply t-gap-x;
+  @apply t-gap-y;
+}
+
+@utility t-gap-half {
+  @apply t-gap-x-half;
+  @apply t-gap-y-half;
+}
+
+/*******************************************************************************
+* Typography
+*******************************************************************************/
+
+@utility t-text-1 {
+  @apply text-4xl sm:text-5xl lg:text-6xl;
+}
+
+@utility t-text-2 {
+  @apply text-3xl sm:text-4xl lg:text-5xl;
+}
+
+@utility t-text-3 {
+  @apply text-2xl sm:text-3xl lg:text-4xl;
+}
+
+@utility t-text-4 {
+  @apply text-xl sm:text-2xl lg:text-3xl;
+}
+
+@utility t-text-5 {
+  @apply text-lg sm:text-xl lg:text-2xl;
+}
+
+@utility t-text-6 {
+  @apply text-base sm:text-lg lg:text-xl;
+}
+
+@utility t-h1 {
+  @apply t-text-1;
+}
+
+@utility t-h2 {
+  @apply t-text-2;
+}
+
+@utility t-h3 {
+  @apply t-text-3;
+}
+
+@utility t-h4 {
+  @apply t-text-4;
+}
+
+@utility t-h5 {
+  @apply t-text-5;
+}
+
+@utility t-h6 {
+  @apply t-text-6;
+}
+
+/*******************************************************************************
+* Utilities
+*******************************************************************************/
+
+@utility t-col {
+  @apply flex flex-col;
+  @apply t-gap;
+}
+
+@utility t-col-half {
+  @apply flex flex-col;
+  @apply t-gap-half;
+}
+
+@utility t-col-reverse {
+  @apply flex flex-col-reverse;
+  @apply t-gap;
+}
+
+@utility t-col-reverse-half {
+  @apply flex flex-col-reverse;
+  @apply t-gap-half;
+}
+
+@utility t-row {
+  @apply flex flex-row;
+  @apply t-gap;
+}
+
+@utility t-row-half {
+  @apply flex flex-row;
+  @apply t-gap-half;
+}
+
+@utility t-row-reverse {
+  @apply flex flex-row-reverse;
+  @apply t-gap;
+}
+
+@utility t-row-reverse-half {
+  @apply flex flex-row-reverse;
+  @apply t-gap-half;
+}
+
+@utility t-container {
+  @apply container;
+  @apply mx-auto;
+  @apply t-col;
+  @apply t-px;
+}
+
+@utility t-container-narrow {
+  @apply max-w-5xl!;
+  @apply t-container;
+}
+
+@utility t-duration {
+  @apply duration-500 ease-in-out;
 }

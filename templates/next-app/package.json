@@ -15,11 +15,12 @@
     "@tanstack/react-table": "^8.21.3",
     "clsx": "^2.1.1",
     "components-library-mtx": "^1.0.5",
-    "tailwind-merge": "^3.5.0",
     "next": "16.2.6",
-    "react-hook-form": "^7.73.1",
+    "nuqs": "^2.8.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.73.1",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
