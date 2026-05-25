@@ -1,0 +1,19 @@
+{
+  "name": "create-wdpro-app",
+  "version": "0.1.0",
+  "description": "Scaffold a WDPro Next.js app",
+  "type": "module",
+  "bin": {
+    "create-wdpro-app": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "execa": "^9.5.2",
+    "fs-extra": "^11.3.0",
+    "giget": "^1.2.4",
+    "picocolors": "^1.1.1"
+  }
+}
