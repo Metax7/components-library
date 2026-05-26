@@ -1,16 +1,25 @@
 "use client"
 
 import { useData } from "@/hooks/use-data"
+import { Button } from "components-library-mtx/button"
 
 export default function Home() {
-  const { data: jewelryData, isLoading: isJewelryLoading } = useData({
+  const {
+    data: jewelryData,
+    isLoading: isJewelryLoading,
+    refetch: refetchJewelry,
+  } = useData({
     resource: "jewelries",
     params: {
       per_page: 3,
     },
   })
 
-  const { data: stoneData, isLoading: isStoneLoading } = useData({
+  const {
+    data: stoneData,
+    isLoading: isStoneLoading,
+    refetch: refetchStones,
+  } = useData({
     resource: "stones",
     params: {
       per_page: 3,
@@ -18,8 +27,7 @@ export default function Home() {
   })
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-12 p-8">
-      {/* Header */}
+    <main className="mx-auto flex max-w-6xl flex-col t-gap p-8">
       <section className="space-y-4 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight">
           WDPRO Template
@@ -32,12 +40,34 @@ export default function Home() {
       </section>
 
       <div className="grid grid-cols-1 gap-12">
-        {/* Jewelry List Section */}
         <section className="space-y-6">
           <div className="space-y-4 border bg-white p-6 shadow-sm">
-            <h2 className="border-b pb-2 text-2xl font-bold">
-              Jewelry Collection
-            </h2>
+            <div className="t-row justify-between border-b pb-2">
+              <h2 className="text-2xl font-bold">Jewelry Collection</h2>
+              <Button
+                title="Refetch"
+                size="sm"
+                onClick={() => refetchJewelry()}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="lucide lucide-refresh-cw-icon lucide-refresh-cw"
+                >
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path d="M8 16H3v5" />
+                </svg>
+              </Button>
+            </div>
 
             {isJewelryLoading ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -82,12 +112,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stone List Section */}
         <section className="space-y-6">
           <div className="space-y-4 border bg-white p-6 shadow-sm">
-            <h2 className="border-b pb-2 text-2xl font-bold">
-              Stone Collection
-            </h2>
+            <div className="t-row justify-between border-b pb-2">
+              <h2 className="text-2xl font-bold">Stone Collection</h2>
+              <Button title="Refetch" size="sm" onClick={() => refetchStones()}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="lucide lucide-refresh-cw-icon lucide-refresh-cw"
+                >
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path d="M8 16H3v5" />
+                </svg>
+              </Button>
+            </div>
 
             {isStoneLoading ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -131,7 +179,6 @@ export default function Home() {
         </section>
       </div>
 
-      {/* Footer Info */}
       <footer className="border-t pt-8 text-center text-sm text-gray-400">
         Built with Next.js 15 + components-library-mtx
       </footer>
