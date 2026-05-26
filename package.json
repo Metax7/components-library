@@ -10,6 +10,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=better-wdpro",
     "test": "turbo run test",
     "storybook": "turbo run storybook --filter=storybook-app",
     "build-storybook": "turbo run build-storybook --filter=storybook-app",
