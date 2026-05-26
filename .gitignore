@@ -39,3 +39,4 @@ storybook-static
 # Turborepo
 .turbo
 
+.vercel
