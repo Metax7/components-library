@@ -39,8 +39,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog"
+import { Field } from "./ui/field"
+import { Textarea } from "./ui/textarea"
+import { useQuote } from "components-library-mtx/hooks"
+import { createQuote } from "@/lib/wdpro/actions"
+import { Spinner } from "./ui/spinner"
+import { toast } from "sonner"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { id: number }, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pageCount?: number
@@ -48,13 +64,16 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: number }, TValue>({
   columns,
   data,
   pageCount,
   filterColumn,
   filterPlaceholder = "Filter...",
 }: DataTableProps<TData, TValue>) {
+  const [openDialog, setOpenDialog] = React.useState(false)
+  const [notes, setNotes] = React.useState("")
+
   const [tableState, setTableState] = useQueryStates({
     page: parseAsIndex.withDefault(0),
     perPage: parseAsInteger.withDefault(10),
@@ -104,19 +123,80 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const { mutate, isPending } = useQuote(createQuote)
+
+  const handleQuote = async () => {
+    mutate(
+      {
+        type: "stone",
+        notes,
+        ids: table.getSelectedRowModel().rows.map((row) => row.original.id),
+      },
+      {
+        onSuccess() {
+          setOpenDialog(false)
+          setNotes("")
+          table.resetRowSelection()
+          toast.success("Quote requested successfully")
+        },
+      }
+    )
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        {filterColumn && (
-          <Input
-            placeholder={filterPlaceholder}
-            value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn(filterColumn)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm bg-background"
-          />
-        )}
+        <div className="flex w-1/3 items-center gap-4">
+          {filterColumn && (
+            <Input
+              placeholder={filterPlaceholder}
+              value={
+                (table.getColumn(filterColumn)?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn(filterColumn)
+                  ?.setFilterValue(event.target.value)
+              }
+              className="bg-background"
+            />
+          )}
+          {table.getSelectedRowModel().rows.length > 0 && (
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  Request a quote ({table.getSelectedRowModel().rows.length})
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    Request a quote ({table.getSelectedRowModel().rows.length})
+                  </DialogTitle>
+                  <DialogDescription className="sr-only">
+                    dialog description
+                  </DialogDescription>
+                </DialogHeader>
+                <Field>
+                  <Textarea
+                    placeholder="Add additional notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </Field>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button disabled={isPending} onClick={handleQuote}>
+                    Request a quote {isPending && <Spinner />}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

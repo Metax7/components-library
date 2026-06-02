@@ -31,7 +31,7 @@ export interface ResourceReturnMap {
   jewelries: JewelryResponse | { data: null; error: string };
   stones: StoneResponse | { data: null; error: string };
   properties: JewelryProperties | StoneProperties;
-  quotes: QuoteResponse | { data: null; error: string };
+  quotes: QuoteResponse | null;
 }
 
 export type InferData<T extends DataOptions> = ResourceReturnMap[T["resource"]];
@@ -123,12 +123,11 @@ export function createUseData(deps: UseDataDeps) {
         case "quotes": {
           const { params } = options;
 
-          const { data, error } = await api.quotes.get({
-            query: params,
-          });
-
-          if (error) throw new Error(error.value as string);
-          return data as InferData<T>;
+          return (
+            await api.quotes.get({
+              query: params,
+            })
+          ).data as InferData<T>;
         }
       }
     };

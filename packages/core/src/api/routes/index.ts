@@ -139,16 +139,45 @@ export const createApiApp = (config: ApiConfig) => {
           },
         ),
     )
-    .get("/quotes", ({ query, authApi, companyId }) => {
-      return authApi
-        .get("quotes", {
-          searchParams: {
-            company_id: companyId,
-            ...cleanParams(query),
-          },
+    .group("/quotes", (app) =>
+      app
+        .get("/", ({ query, authApi, companyId }) => {
+          return authApi
+            .get("quotes", {
+              searchParams: {
+                company_id: companyId,
+                ...cleanParams(query),
+              },
+            })
+            .json<QuoteResponse>();
         })
-        .json<QuoteResponse>();
-    });
+        .post(
+          "/",
+          async ({ body, authApi, companyId }) => {
+            await authApi.post("quotes", {
+              json: {
+                quote: {
+                  company_id: companyId,
+                  ...body,
+                },
+              },
+            });
+
+            return { success: true };
+          },
+          {
+            body: t.Object({
+              customer_notes: t.Optional(t.String()),
+              item_ids: t.Array(
+                t.Object({
+                  stone_id: t.Optional(t.Number()),
+                  jewelry_id: t.Optional(t.Number()),
+                }),
+              ),
+            }),
+          },
+        ),
+    );
 };
 
 export type App = ReturnType<typeof createApiApp>;
