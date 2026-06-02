@@ -13,7 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { useQueryStates, parseAsInteger, parseAsIndex } from "nuqs"
+import {
+  useQueryStates,
+  parseAsInteger,
+  parseAsIndex,
+  parseAsJson,
+  parseAsArrayOf,
+} from "nuqs"
 import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -77,6 +83,7 @@ export function DataTable<TData extends { id: number }, TValue>({
   const [tableState, setTableState] = useQueryStates({
     page: parseAsIndex.withDefault(0),
     perPage: parseAsInteger.withDefault(10),
+    selectedItems: parseAsArrayOf(parseAsInteger).withDefault([]),
   })
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -85,7 +92,20 @@ export function DataTable<TData extends { id: number }, TValue>({
   )
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+
+  // Derive current-page rowSelection from URL-persisted selectedRows (array of original.id)
+  // TanStack Table keys rowSelection by string index, so we must use String(index)
+  const rowSelection = React.useMemo(() => {
+    return data.reduce(
+      (acc, row, index) => {
+        if (tableState.selectedItems.includes(row.id)) {
+          acc[String(index)] = true
+        }
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
+  }, [data, tableState.selectedItems])
 
   const table = useReactTable({
     data,
@@ -108,7 +128,22 @@ export function DataTable<TData extends { id: number }, TValue>({
         perPage: next.pageSize,
       })
     },
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: (updater) => {
+      const next =
+        typeof updater === "function" ? updater(rowSelection) : updater
+      // TanStack Table uses string keys — filter by String(index)
+      const currentPageSelectedIds = data
+        .filter((_, index) => next[String(index)])
+        .map((row) => row.id) // row.id === original.id (TData extends { id: number })
+      // keep selections from other pages untouched
+      const currentPageIds = new Set(data.map((row) => row.id))
+      const otherPageSelectedIds = tableState.selectedItems.filter(
+        (id) => !currentPageIds.has(id)
+      )
+      setTableState({
+        selectedItems: [...otherPageSelectedIds, ...currentPageSelectedIds],
+      })
+    },
     manualPagination: true,
     pageCount,
     state: {
@@ -130,13 +165,13 @@ export function DataTable<TData extends { id: number }, TValue>({
       {
         type: "stone",
         notes,
-        ids: table.getSelectedRowModel().rows.map((row) => row.original.id),
+        ids: tableState.selectedItems,
       },
       {
         onSuccess() {
           setOpenDialog(false)
           setNotes("")
-          table.resetRowSelection()
+          setTableState({ selectedItems: [] })
           toast.success("Quote requested successfully")
         },
       }
@@ -162,17 +197,17 @@ export function DataTable<TData extends { id: number }, TValue>({
               className="bg-background"
             />
           )}
-          {table.getSelectedRowModel().rows.length > 0 && (
+          {tableState.selectedItems.length > 0 && (
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  Request a quote ({table.getSelectedRowModel().rows.length})
+                  Request a quote ({tableState.selectedItems.length})
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>
-                    Request a quote ({table.getSelectedRowModel().rows.length})
+                    Request a quote ({tableState.selectedItems.length})
                   </DialogTitle>
                   <DialogDescription className="sr-only">
                     dialog description
@@ -276,7 +311,7 @@ export function DataTable<TData extends { id: number }, TValue>({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {tableState.selectedItems.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
