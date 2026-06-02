@@ -25,6 +25,10 @@
     "chromatic": {
       "dependsOn": ["build-storybook"],
       "outputs": []
+    },
+    "release": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

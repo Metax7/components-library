@@ -59,7 +59,8 @@
     "dev": "tsdown --watch",
     "build:js": "tsdown",
     "build:css": "bunx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
-    "build": "bun run build:js && bun run build:css"
+    "build": "bun run build:js && bun run build:css",
+    "release": "npm publish"
   },
   "dependencies": {
     "@elysia/eden": "^1.4.10",
