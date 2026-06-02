@@ -9,104 +9,13 @@ import type {
   StoneProperties,
 } from "../api/types";
 import { type ApiClient } from "../api";
-import { z } from "zod";
-
-export const bookmarksParamsSchema = z.object({
-  sort_by: z.string().optional().nullable(),
-  sort_dir: z
-    .union([z.literal("asc"), z.literal("desc")])
-    .optional()
-    .nullable(),
-});
-
-export type BookmarksParams = z.infer<typeof bookmarksParamsSchema>;
-
-export const jewelriesParamsSchema = z.object({
-  company_id: z.coerce.number().optional().nullable(),
-  page: z.coerce.number().optional().nullable(),
-  per_page: z.coerce.number().optional().nullable(),
-  sort_by: z.string().optional().nullable(),
-  sort_dir: z
-    .union([z.literal("asc"), z.literal("desc")])
-    .optional()
-    .nullable(),
-  item_no: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
-  category: z.string().optional().nullable(),
-  sub_category: z.string().optional().nullable(),
-  certified_only: z.coerce.boolean().optional().nullable(),
-  only_diamonds: z.coerce.boolean().optional().nullable(),
-  only_gemstones: z.coerce.boolean().optional().nullable(),
-  only_fancy_diamonds: z.coerce.boolean().optional().nullable(),
-  stone_type: z.string().optional().nullable(),
-  stone_color: z.string().optional().nullable(),
-  stone_shape: z.string().optional().nullable(),
-  metal_type: z.string().optional().nullable(),
-  metal_color: z.string().optional().nullable(),
-  metal_karat: z.string().optional().nullable(),
-  metal_weight_min: z.coerce.number().optional().nullable(),
-  metal_weight_max: z.coerce.number().optional().nullable(),
-  on_hand: z.coerce.boolean().optional().nullable(),
-  size: z.string().optional().nullable(),
-  gender: z.string().optional().nullable(),
-  design: z.string().optional().nullable(),
-  model: z.string().optional().nullable(),
-  style: z.string().optional().nullable(),
-  price_min: z.coerce.number().optional().nullable(),
-  price_max: z.coerce.number().optional().nullable(),
-});
-
-export type JewelriesParams = z.infer<typeof jewelriesParamsSchema>;
-
-export const stonesParamsSchema = z.object({
-  company_id: z.coerce.number().optional().nullable(),
-  page: z.coerce.number().optional().nullable(),
-  per_page: z.coerce.number().optional().nullable(),
-  sort_by: z.string().optional().nullable(),
-  sort_dir: z
-    .union([z.literal("asc"), z.literal("desc")])
-    .optional()
-    .nullable(),
-  item_no: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
-  stone_type: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
-  clarity: z.string().optional().nullable(),
-  shape: z.string().optional().nullable(),
-  carats_min: z.coerce.number().optional().nullable(),
-  carats_max: z.coerce.number().optional().nullable(),
-  price_min: z.coerce.number().optional().nullable(),
-  price_max: z.coerce.number().optional().nullable(),
-  lab: z.string().optional().nullable(),
-  cut: z.string().optional().nullable(),
-  polish: z.string().optional().nullable(),
-  symmetry: z.string().optional().nullable(),
-  fluorescence: z.string().optional().nullable(),
-});
-
-export type StonesParams = z.infer<typeof stonesParamsSchema>;
-
-export const propertiesParamsSchema = z.object({
-  type: z.union([z.literal("jewelry"), z.literal("stone")]),
-  category: z.string().optional(),
-  sub_category: z.string().optional(),
-});
-
-export type PropertiesParams = z.infer<typeof propertiesParamsSchema>;
-
-export const quotesParamsSchema = z.object({
-  status: z.string().optional().nullable(),
-  search: z.string().optional().nullable(),
-  sort_by: z.string().optional().nullable(),
-  sort_dir: z
-    .union([z.literal("asc"), z.literal("desc")])
-    .optional()
-    .nullable(),
-  page: z.coerce.number().optional().nullable(),
-  per_page: z.coerce.number().optional().nullable(),
-});
-
-export type QuotesParams = z.infer<typeof quotesParamsSchema>;
+import type {
+  BookmarksParams,
+  JewelriesParams,
+  PropertiesParams,
+  QuotesParams,
+  StonesParams,
+} from "@/schema";
 
 export type DataOptions =
   | { resource: "session" }

@@ -39,6 +39,10 @@
       "types": "./dist/hooks/index.d.ts",
       "import": "./dist/hooks/index.js"
     },
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
+    },
     "./dal": {
       "types": "./dist/dal/index.d.ts",
       "import": "./dist/dal/index.js"

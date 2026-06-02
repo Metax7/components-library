@@ -16,7 +16,7 @@ import {
   jewelriesParamsSchema,
   propertiesParamsSchema,
   stonesParamsSchema,
-} from "@/hooks";
+} from "@/schema";
 
 export interface ApiConfig {
   baseUrl: string;

@@ -9,6 +9,7 @@ export default defineConfig({
     "./src/api/index.ts",
     "./src/actions/index.ts",
     "./src/hooks/index.ts",
+    "./src/schema/index.ts",
     "./src/dal/index.ts",
   ],
   format: ["esm"],

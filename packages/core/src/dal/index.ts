@@ -4,7 +4,7 @@ import type {
   StonesParams,
   BookmarksParams,
   QuotesParams,
-} from "../hooks/use-data";
+} from "@/schema";
 
 export interface DalDeps {
   api: ApiClient;
@@ -73,7 +73,10 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
             const body = error.value as any;
             return {
               data: null,
-              error: body?.message || body?.error || "Something went wrong. Please try again later.",
+              error:
+                body?.message ||
+                body?.error ||
+                "Something went wrong. Please try again later.",
             };
           }
 
@@ -103,7 +106,10 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
             const body = error.value as any;
             return {
               data: null,
-              error: body?.message || body?.error || "Something went wrong. Please try again later.",
+              error:
+                body?.message ||
+                body?.error ||
+                "Something went wrong. Please try again later.",
             };
           }
 
@@ -133,7 +139,10 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
             const body = error.value as any;
             return {
               data: null,
-              error: body?.message || body?.error || "Something went wrong. Please try again later.",
+              error:
+                body?.message ||
+                body?.error ||
+                "Something went wrong. Please try again later.",
             };
           }
 
@@ -151,4 +160,3 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
 };
 
 export type Dal = ReturnType<typeof createDal>;
-
