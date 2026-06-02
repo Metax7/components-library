@@ -120,6 +120,9 @@ async function main() {
   s.start(`Installing dependencies via ${pkgManager}...`);
   try {
     await execa(pkgManager, ["install"], { cwd: targetDir });
+    await execa(pkgManager, ["install", "components-library-mtx@latest"], {
+      cwd: targetDir,
+    });
     s.stop("Dependencies installed successfully!");
   } catch (err) {
     s.stop(
