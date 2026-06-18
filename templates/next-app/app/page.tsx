@@ -180,7 +180,7 @@ export default function Home() {
       </div>
 
       <footer className="border-t pt-8 text-center text-sm text-gray-400">
-        Built with Next.js 15 + components-library-mtx
+        Built with Next.js 16 + components-library-mtx
       </footer>
     </main>
   )
