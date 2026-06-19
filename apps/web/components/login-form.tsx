@@ -13,17 +13,10 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import Link from "next/link"
-import { z } from "zod"
 import { Controller } from "react-hook-form"
 import { useFormAction } from "components-library-mtx/hooks"
 import { signIn } from "@/lib/wdpro/actions"
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-})
-
-export type LoginFormValues = z.infer<typeof loginSchema>
+import { loginSchema } from "components-library-mtx/schema"
 
 export function LoginForm({
   className,

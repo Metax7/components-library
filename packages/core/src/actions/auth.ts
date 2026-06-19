@@ -1,10 +1,7 @@
 import { parseRailsErrors } from "../api/utils";
-import type {
-  ApiClient,
-  LoginFormValues,
-  SignupFormValues,
-  User,
-} from "../api";
+import type { ApiClient, User } from "../api";
+import type { LoginFormValues } from "@/schema/login";
+import type { SignupFormValues } from "@/schema/signup";
 
 export interface ActionDeps {
   api: ApiClient;

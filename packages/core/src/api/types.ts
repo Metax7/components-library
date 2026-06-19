@@ -313,16 +313,3 @@ export interface StoneProperties {
   table_max: number
   table_min: number
 }
-
-export interface LoginFormValues {
-  email: string
-  password: string
-}
-
-export interface SignupFormValues {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  passwordConfirmation: string
-}
