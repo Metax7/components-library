@@ -169,8 +169,8 @@ Seamlessly integrate `react-hook-form` with Next.js Server Actions.
 
 ```tsx
 import { useFormAction } from "components-library-mtx/hooks";
+import { loginSchema } from "components-library-mtx/schema";
 import { signIn } from "@/lib/actions"; // Your server action
-import { loginSchema } from "@/lib/schemas";
 
 export function LoginForm() {
   const { form, onSubmit, isPending } = useFormAction({
