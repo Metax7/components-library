@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, lazy, Suspense } from "react";
 import type { LibraryConfig } from "./types";
 import { toast, Toaster } from "sonner";
 import { HTTPError } from "ky";
@@ -10,7 +10,12 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const ReactQueryDevtools = lazy(() =>
+  import("@tanstack/react-query-devtools").then((mod) => ({
+    default: mod.ReactQueryDevtools,
+  }))
+);
 
 const LibraryContext = createContext<LibraryConfig | null>(null);
 
@@ -96,7 +101,11 @@ export const LibraryProvider = ({
       <QueryClientProvider client={queryClient}>
         <Toaster richColors />
         {children}
-        {config.enableDevtools && <ReactQueryDevtools initialIsOpen={false} />}
+        {config.enableDevtools && (
+          <Suspense fallback={null}>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Suspense>
+        )}
       </QueryClientProvider>
     </LibraryContext.Provider>
   );

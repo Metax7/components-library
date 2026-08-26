@@ -81,10 +81,14 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "next": ">=13.0.0",
-    "@tanstack/react-query": "^5.100.9"
+    "@tanstack/react-query": "^5.100.9",
+    "@tanstack/react-query-devtools": "^5.100.9"
   },
   "peerDependenciesMeta": {
     "next": {
+      "optional": true
+    },
+    "@tanstack/react-query-devtools": {
       "optional": true
     }
   },
@@ -98,8 +102,7 @@
     "react-dom": "^19.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^4.0.0",
-    "tsdown": "^0.18.3",
-    "@tanstack/react-query-devtools": "^5.100.9"
+    "tsdown": "^0.18.3"
   },
   "engines": {
     "bun": "^1.3"
