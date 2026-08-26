@@ -26,12 +26,12 @@ export type DataOptions =
   | { resource: "quotes"; params?: QuotesParams };
 
 export interface ResourceReturnMap {
-  session: User | { data: null; error: string };
-  bookmarks: BookmarkResponse | { data: null; error: string };
-  jewelries: JewelryResponse | { data: null; error: string };
-  stones: StoneResponse | { data: null; error: string };
+  session: User | null;
+  bookmarks: BookmarkResponse | null;
+  jewelries: JewelryResponse;
+  stones: StoneResponse;
   properties: JewelryProperties | StoneProperties;
-  quotes: QuoteResponse | { data: null; error: string };
+  quotes: QuoteResponse | null;
 }
 
 export type InferData<T extends DataOptions> = ResourceReturnMap[T["resource"]];
@@ -73,7 +73,12 @@ export function createUseData(deps: UseDataDeps) {
         case "session": {
           const { data, error } = await api.auth.me.get();
 
-          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
 
           return data as InferData<T>;
         }
@@ -85,7 +90,12 @@ export function createUseData(deps: UseDataDeps) {
             query: params,
           });
 
-          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
 
           return data as InferData<T>;
         }
@@ -134,7 +144,12 @@ export function createUseData(deps: UseDataDeps) {
             query: params,
           });
 
-          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
 
           return data as InferData<T>;
         }

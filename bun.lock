@@ -86,7 +86,7 @@
     },
     "packages/core": {
       "name": "components-library-mtx",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "dependencies": {
         "@elysia/eden": "^1.4.10",
         "@hookform/resolvers": "^5.2.2",
@@ -106,7 +106,6 @@
         "@storybook/react": "^10.1.10",
         "@tailwindcss/postcss": "^4.0.0",
         "@tailwindcss/vite": "^4.1.18",
-        "@tanstack/react-query-devtools": "^5.100.9",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "postcss": "^8.4.0",
@@ -117,17 +116,19 @@
       },
       "peerDependencies": {
         "@tanstack/react-query": "^5.100.9",
+        "@tanstack/react-query-devtools": "^5.100.9",
         "next": ">=13.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
       },
       "optionalPeers": [
+        "@tanstack/react-query-devtools",
         "next",
       ],
     },
     "packages/create-wdpro-app": {
       "name": "create-wdpro-app",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "bin": {
         "create-wdpro-app": "./src/index.js",
       },

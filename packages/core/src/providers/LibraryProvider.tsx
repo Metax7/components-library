@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, lazy, Suspense } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  lazy,
+  Suspense,
+} from "react";
 import type { LibraryConfig } from "./types";
 import { toast, Toaster } from "sonner";
 import { HTTPError } from "ky";
@@ -14,10 +20,50 @@ import {
 const ReactQueryDevtools = lazy(() =>
   import("@tanstack/react-query-devtools").then((mod) => ({
     default: mod.ReactQueryDevtools,
-  }))
+  })),
 );
 
 const LibraryContext = createContext<LibraryConfig | null>(null);
+
+const handleQueryError = async (error: unknown) => {
+  if (error instanceof HTTPError) {
+    const status = error.response.status;
+
+    if (status === 422) {
+      try {
+        const data = await error.response.clone().json();
+        const message = data.errors
+          ? Array.isArray(data.errors)
+            ? data.errors.join(", ")
+            : Object.values(data.errors).flat().join(", ")
+          : data.error || data.message || "Validation error";
+        return toast.error(`Validation error: ${message}`);
+      } catch {
+        return toast.error("Validation error occurred");
+      }
+    }
+
+    if (status === 401) {
+      try {
+        const data = await error.response.clone().json();
+        const message = data.error || data.message || "Unauthorized access";
+        return toast.error(`Unauthorized: ${message}`);
+      } catch {
+        return toast.error("Unauthorized: Please sign in again");
+      }
+    }
+
+    if (status === 500) {
+      return toast.error("Internal server error. We are already fixing it!");
+    }
+  }
+
+  if (error instanceof Error) {
+    return toast.error(error.message || "Something went wrong");
+  }
+
+  toast.error("Something went wrong");
+};
 
 export const LibraryProvider = ({
   children,
@@ -30,68 +76,10 @@ export const LibraryProvider = ({
     () =>
       new QueryClient({
         mutationCache: new MutationCache({
-          onError: async (error) => {
-            if (error instanceof HTTPError) {
-              const status = error.response.status;
-
-              if (status === 422) {
-                const data = await error.response.json();
-                const message = data.errors
-                  ? Object.values(data.errors).flat().join(", ")
-                  : "Validation error";
-                return toast.error(`Validation error: ${message}`);
-              }
-
-              if (status === 401) {
-                const data = await error.response.json();
-                const message = data.errors
-                  ? Object.values(data.errors).flat().join(", ")
-                  : "Unauthorized error";
-
-                return toast.error(`Unauthorized error: ${message}`);
-              }
-
-              if (status === 500) {
-                return toast.error(
-                  "Internal server error. We are already fixing it!",
-                );
-              }
-            }
-
-            toast.error(error.message || "Something went wrong");
-          },
+          onError: handleQueryError,
         }),
         queryCache: new QueryCache({
-          onError: async (error) => {
-            if (error instanceof HTTPError) {
-              const status = error.response.status;
-
-              if (status === 422) {
-                const data = await error.response.json();
-                const message = data.errors
-                  ? Object.values(data.errors).flat().join(", ")
-                  : "Validation error";
-                return toast.error(`Validation error: ${message}`);
-              }
-
-              if (status === 401) {
-                const data = await error.response.json();
-                const message = data.errors
-                  ? Object.values(data.errors).flat().join(", ")
-                  : "Unauthorized error";
-
-                return toast.error(`Unauthorized error: ${message}`);
-              }
-
-              if (status === 500) {
-                return toast.error(
-                  "Internal server error. We are already fixing it!",
-                );
-              }
-            }
-
-            toast.error(error.message || "Something went wrong");
-          },
+          onError: handleQueryError,
         }),
       }),
   );
