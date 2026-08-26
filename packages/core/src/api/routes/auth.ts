@@ -14,7 +14,7 @@ export const authRoutes = (config: ApiConfig) =>
         "/login",
         async ({ body, api, companyId, cookie: { auth_token }, set }) => {
           const response = await api.post("login", {
-            json: { user: { company_id: companyId, ...body } },
+            json: { user: { ...body, company_id: companyId } },
             headers: { "x-action-type": "login" },
           });
 
@@ -40,7 +40,7 @@ export const authRoutes = (config: ApiConfig) =>
         "/signup",
         async ({ body, api, companyId, cookie: { auth_token }, set }) => {
           const response = await api.post("signup", {
-            json: { user: { company_id: companyId, ...body } },
+            json: { user: { ...body, company_id: companyId } },
             headers: { "x-action-type": "signUp" },
           });
 

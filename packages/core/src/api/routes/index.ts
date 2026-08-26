@@ -64,8 +64,8 @@ export const createApiApp = (config: ApiConfig) => {
         return authApi
           .get("stones", {
             searchParams: {
-              company_id: companyId,
               ...cleanParams(query),
+              company_id: companyId,
             },
           })
           .json<StoneResponse>();
@@ -144,10 +144,10 @@ export const createApiApp = (config: ApiConfig) => {
         .get("/", ({ query, authApi, companyId }) => {
           return authApi
             .get("quotes", {
-              searchParams: {
-                company_id: companyId,
-                ...cleanParams(query),
-              },
+searchParams: {
+  ...cleanParams(query),
+  company_id: companyId,
+},
             })
             .json<QuoteResponse>();
         })
@@ -157,8 +157,8 @@ export const createApiApp = (config: ApiConfig) => {
             await authApi.post("quotes", {
               json: {
                 quote: {
-                  company_id: companyId,
                   ...body,
+                  company_id: companyId,
                 },
               },
             });
