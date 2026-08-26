@@ -26,12 +26,12 @@ export type DataOptions =
   | { resource: "quotes"; params?: QuotesParams };
 
 export interface ResourceReturnMap {
-  session: User | null;
-  bookmarks: BookmarkResponse | null;
+  session: User | { data: null; error: string };
+  bookmarks: BookmarkResponse | { data: null; error: string };
   jewelries: JewelryResponse | { data: null; error: string };
   stones: StoneResponse | { data: null; error: string };
   properties: JewelryProperties | StoneProperties;
-  quotes: QuoteResponse | null;
+  quotes: QuoteResponse | { data: null; error: string };
 }
 
 export type InferData<T extends DataOptions> = ResourceReturnMap[T["resource"]];
@@ -70,17 +70,24 @@ export function createUseData(deps: UseDataDeps) {
 
     const queryFn = async (): Promise<InferData<T>> => {
       switch (resource) {
-        case "session":
-          return (await api.auth.me.get()).data as InferData<T>;
+        case "session": {
+          const { data, error } = await api.auth.me.get();
+
+          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+
+          return data as InferData<T>;
+        }
 
         case "bookmarks": {
           const { params } = options;
 
-          return (
-            await api.bookmarks.get({
-              query: params,
-            })
-          ).data as InferData<T>;
+          const { data, error } = await api.bookmarks.get({
+            query: params,
+          });
+
+          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+
+          return data as InferData<T>;
         }
 
         case "jewelries": {
@@ -123,11 +130,13 @@ export function createUseData(deps: UseDataDeps) {
         case "quotes": {
           const { params } = options;
 
-          return (
-            await api.quotes.get({
-              query: params,
-            })
-          ).data as InferData<T>;
+          const { data, error } = await api.quotes.get({
+            query: params,
+          });
+
+          if (error) throw new Error(typeof error.value === "string" ? error.value : JSON.stringify(error.value));
+
+          return data as InferData<T>;
         }
       }
     };
