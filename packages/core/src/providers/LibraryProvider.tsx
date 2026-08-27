@@ -25,10 +25,7 @@ const ReactQueryDevtools = lazy(() =>
 
 const LibraryContext = createContext<LibraryConfig | null>(null);
 
-const handleQueryError = async (
-  error: unknown,
-  event?: "fetch" | "mutation",
-) => {
+const handleQueryError = async (error: unknown, ..._rest: unknown[]) => {
   if (error instanceof HTTPError) {
     const status = error.response.status;
 
@@ -66,8 +63,6 @@ const handleQueryError = async (
   }
 
   // Suppress non-actionable transient errors from background queries
-  if (!event || event !== "mutation") return;
-
   if (error instanceof Error) {
     return toast.error(error.message || "Something went wrong");
   }
