@@ -76,14 +76,19 @@ export const authRoutes = (config: ApiConfig) =>
         }
       })
       .post("/logout", async ({ authApi, cookie: { auth_token }, set }) => {
-        await authApi.delete("logout", {
-          headers: { "x-action-type": "logout" },
-        });
-        set.headers["x-action-type"] = "logout";
-        auth_token?.remove();
+        try {
+          await authApi.delete("logout", {
+            headers: { "x-action-type": "logout" },
+          });
+        } catch {
+          // ignore failures
+        } finally {
+          set.headers["x-action-type"] = "logout";
+          auth_token?.remove();
 
-        if (config.hooks?.removeAuthToken) {
-          await config.hooks.removeAuthToken();
+          if (config.hooks?.removeAuthToken) {
+            await config.hooks.removeAuthToken();
+          }
         }
 
         return { success: true };
