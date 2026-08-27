@@ -25,9 +25,16 @@ const ReactQueryDevtools = lazy(() =>
 
 const LibraryContext = createContext<LibraryConfig | null>(null);
 
-const handleQueryError = async (error: unknown) => {
+const handleQueryError = async (
+  error: unknown,
+  event?: "fetch" | "mutation",
+) => {
   if (error instanceof HTTPError) {
     const status = error.response.status;
+
+    // Skip transient errors and SSR/CSR mismatches
+    if ([408, 425, 429, 502, 503, 504].includes(status)) return;
+    if (status >= 500 && status !== 500) return;
 
     if (status === 422) {
       try {
@@ -57,6 +64,9 @@ const handleQueryError = async (error: unknown) => {
       return toast.error("Internal server error. We are already fixing it!");
     }
   }
+
+  // Suppress non-actionable transient errors from background queries
+  if (!event || event !== "mutation") return;
 
   if (error instanceof Error) {
     return toast.error(error.message || "Something went wrong");

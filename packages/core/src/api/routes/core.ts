@@ -13,7 +13,7 @@ export const corePlugin = (config: ApiConfig) => {
     .decorate(
       "api",
       ky.create({
-        prefixUrl: config.baseUrl,
+        prefix: config.baseUrl,
         retry: 1,
         timeout: 30000,
         ...restKyOptions,
