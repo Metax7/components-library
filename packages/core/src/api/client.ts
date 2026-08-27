@@ -20,12 +20,16 @@ export const createClient = (config: ApiClientConfig) => {
   const { baseUrl, kyOptions, hooks } = config;
   const url = new URL(baseUrl);
 
+  const { hooks: customHooks, ...restKyOptions } = kyOptions || {};
+
   const fetcher = ky.create({
     retry: 1,
     timeout: 30000,
     throwHttpErrors: false, // Let Eden Treaty handle errors
     credentials: "include", // Enable cookie support by default
+    ...restKyOptions,
     hooks: {
+      ...customHooks,
       beforeRequest: [
         async ({ request }) => {
           request.headers.set("X-Requested-With", "XMLHttpRequest");
@@ -37,6 +41,7 @@ export const createClient = (config: ApiClientConfig) => {
             }
           }
         },
+        ...(customHooks?.beforeRequest || []),
       ],
       afterResponse: [
         async ({ response }) => {
@@ -56,9 +61,9 @@ export const createClient = (config: ApiClientConfig) => {
             }
           }
         },
+        ...(customHooks?.afterResponse || []),
       ],
     },
-    ...kyOptions,
   });
 
   return treaty<App>(url.host, { fetcher }).api;

@@ -5,22 +5,26 @@ import ky from "ky";
 /**
  * CORE PLUGIN: Handles basic API setup and Auth Token resolution
  */
-export const corePlugin = (config: ApiConfig) =>
-  new Elysia({ name: "core" })
+export const corePlugin = (config: ApiConfig) => {
+  const { hooks: customKyHooks, ...restKyOptions } = config.kyOptions || {};
+
+  return new Elysia({ name: "core" })
     .decorate("companyId", config.companyId)
     .decorate(
       "api",
       ky.create({
-        prefix: config.baseUrl,
+        prefixUrl: config.baseUrl,
         retry: 1,
         timeout: 30000,
+        ...restKyOptions,
         hooks: {
+          ...customKyHooks,
           beforeRequest: [
             ({ request }) =>
               request.headers.set("X-Requested-With", "XMLHttpRequest"),
+            ...(customKyHooks?.beforeRequest || []),
           ],
         },
-        ...config.kyOptions,
       }),
     )
     .derive({ as: "global" }, async ({ api, cookie: { auth_token }, headers }) => {
@@ -48,3 +52,4 @@ export const corePlugin = (config: ApiConfig) =>
 
       return { token, authApi };
     });
+};
