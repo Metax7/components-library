@@ -32,6 +32,13 @@ export default defineConfig({
     "@tanstack/react-query",
     "@tanstack/react-query-devtools",
     "react-hook-form",
+    "elysia",
+    "@elysia/eden",
+    "@sinclair/typebox",
+    "next",
+    "next/headers",
+    "next/cache",
+    "next/navigation",
   ],
   platform: "browser",
 });
