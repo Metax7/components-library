@@ -1,7 +1,7 @@
 # Implementation Plans Index
 
 > **Audited Package:** `packages/core` (`components-library-mtx`)
-> **Baseline Commit:** `cbb9dfd`
+> **Baseline Commit:** `daa5ce9`
 > **Generated:** 2026-08-26
 
 ---
