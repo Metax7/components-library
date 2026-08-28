@@ -23,7 +23,7 @@
 | [011](011-allow-external-query-client-in-provider.md) | Allow External QueryClient in `LibraryProvider` | Architecture | **HIGH** | M | MEDIUM | `DONE` | Exec: daa5ce9 |
 | [012](012-fix-stone-types.md) | Fix Overly Strict Literal Types in `Stone` Interface | Correctness | **MEDIUM** | S | LOW | `TODO` |
 | [013](013-export-button-variants.md) | Export `buttonVariants` & Derive `ButtonProps` | DX | **MEDIUM** | S | LOW | `TODO` |
-| [014](014-update-peer-dependencies-and-external-builds.md) | Update Peer Dependencies & Tsdown Externals | DX / Build | **HIGH** | S | MEDIUM | `TODO` |
+| [014](014-update-peer-dependencies-and-external-builds.md) | Update Peer Dependencies & Tsdown Externals | DX / Build | **HIGH** | S | MEDIUM | `DONE` | Exec: a9f9e5c |
 | [015](015-setup-testing-framework.md) | Setup Testing Framework & Baseline Test Suite | Testing | **HIGH** | M | LOW | `TODO` |
 | [016](016-clean-type-casts-and-add-jsdoc.md) | Clean Type Casts & Add Comprehensive JSDoc | DX | **MEDIUM** | M | LOW | `TODO` |
 | [017](017-fix-ky-v2-api-and-suppress-client-toast-errors.md) | Fix ky v2 API (`prefixUrl` → `baseUrl`) & Suppress Toast Errors on Hydration | Security / UX | **HIGH** | S | LOW | `DONE` |
