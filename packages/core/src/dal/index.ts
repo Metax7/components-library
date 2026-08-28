@@ -14,6 +14,26 @@ export interface DalDeps {
 
 export type DalResult<T> = T | { data: null; error: string };
 
+/**
+ * Factory function to create a typed DAL (Data Access Layer) with caching support.
+ * 
+ * Provides cached API calls for user session and implements tagging-based cache invalidation.
+ * Wraps fetchers with error handling, automatic retry, and tagged cache lifecycles.
+ * 
+ * @param deps - Object containing api client and optional cache functions
+ * @returns DAL object with typed methods grouped by resource (auth, bookmarks, jewelries, stones, quotes)
+ * 
+ * @example
+ * ```ts
+ * const dal = createDal({ api });
+ * 
+ * const user = await dal.auth.getCurrentUser();
+ * if (user) {
+ *   // Cached for hours, tag invalidates cache
+ *   del.auth.cacheLife("hours");
+ * }
+ * ```
+ */
 export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
   const getCurrentUser = async () => {
     if (cacheLife) cacheLife("hours");

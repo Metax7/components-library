@@ -31,11 +31,17 @@ export const LibraryProvider = ({
   );
 };
 
+/**
+ * Hook to access the current LibraryProvider configuration.
+ *
+ * @throws {Error} If called outside of a `<LibraryProvider>`.
+ * @returns {LibraryConfig} The library configuration object.
+ */
 export const useLibConfig = (): LibraryConfig => {
   const context = useContext(LibraryContext);
 
   if (context === null) {
-    throw new Error("useLibraryConfig must be used within a LibraryProvider");
+    throw new Error("useLibConfig must be used within a LibraryProvider");
   }
 
   return context;

@@ -2,6 +2,22 @@ import React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/utils";
 
+/**
+ * Customizable button component with variant and size options.
+ * 
+ * Renders a responsive button that supports:
+ * - Four variants: primary, destructive, outline, ghost
+ * - Three sizes: sm, md, lg
+ * - Full React.ButtonHTMLAttributes support
+ * 
+ * @example
+ * ```tsx
+ * <Button variant="primary" size="md">Click Me</Button>
+ * <Button variant="destructive">Delete Item</Button>
+ * <Button variant="outline">Cancel</Button>
+ * ```
+ */
+
 const buttonVariants = cva(
   "inline-flex items-center cursor-pointer justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
   {
@@ -32,6 +48,12 @@ export interface ButtonProps
   size?: "sm" | "md" | "lg";
 }
 
+/**
+ * Forwarded button component.
+ * 
+ * @param props - Button props including className, variant, and size
+ * @param ref - Ref to the underlying HTMLButtonElement
+ */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
