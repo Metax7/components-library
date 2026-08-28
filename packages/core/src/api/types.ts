@@ -120,12 +120,12 @@ export interface Stone {
   id: number
   type: string | "diamond"
   company_id: number
-  jewelry_id: null
-  is_shown: true
+  jewelry_id: number | null
+  is_shown: boolean
   item_no: string
-  jewelry_item_no: null
-  description: null
-  description_2: null
+  jewelry_item_no: string | null
+  description: string | null
+  description_2: string | null
   stone_type: string
   shape_code: string
   shape_name: string
@@ -140,7 +140,7 @@ export interface Stone {
   on_travel_stones: number
   color_code: string
   clarity_code: string
-  cut_code: null
+  cut_code: string | null
   polish_code: string
   symmetry_code: string
   fluorescence_code: string
@@ -151,31 +151,31 @@ export interface Stone {
   ratio: string
   depth: number
   table: number
-  size: null
+  size: string | null
   culet: string
   girdle: string
   girdle_thin: string
   girdle_thick: string
-  girdle_percentage: null
-  crown_angle: null
-  crown_height: null
-  pavilion_angle: null
-  pavilion_depth: null
-  overall_make: null
-  is_fancy: false
-  fancy_color_name: null
-  fancy_intensity: null
-  fancy_overtone: null
-  inclusion_black: null
-  inclusion_center: null
+  girdle_percentage: number | null
+  crown_angle: number | null
+  crown_height: number | null
+  pavilion_angle: number | null
+  pavilion_depth: number | null
+  overall_make: string | null
+  is_fancy: boolean
+  fancy_color_name: string | null
+  fancy_intensity: string | null
+  fancy_overtone: string | null
+  inclusion_black: string | null
+  inclusion_center: string | null
   lab_name: string
   lab_cert_no: string
   lab_comments: string
   rap_price: string
-  origin: null
-  location: null
-  company_city: null
-  company_state: null
+  origin: string | null
+  location: string | null
+  company_city: string | null
+  company_state: string | null
   company_country: string
   image_1_filename: string
   image_2_filename: string | null
@@ -188,12 +188,12 @@ export interface Stone {
   remarks: string | null
   created_at: string
   updated_at: string
-  discarded_at: null
+  discarded_at: string | null
   certificate_url: string
   stone_type_human: string
-  discount: null
-  price_per_carat: null
-  price_total: null
+  discount: number | null
+  price_per_carat: number | null
+  price_total: number | null
   images: string[]
   certificates: string[]
   is_bookmarked: boolean
