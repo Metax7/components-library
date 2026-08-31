@@ -14,7 +14,7 @@ export const authRoutes = (config: ApiConfig) =>
         "/login",
         async ({ body, api, companyId, cookie: { auth_token }, set }) => {
           const response = await api.post("login", {
-            json: { user: { company_id: companyId, ...body } },
+            json: { user: { ...body, company_id: companyId } },
             headers: { "x-action-type": "login" },
           });
 
@@ -40,7 +40,7 @@ export const authRoutes = (config: ApiConfig) =>
         "/signup",
         async ({ body, api, companyId, cookie: { auth_token }, set }) => {
           const response = await api.post("signup", {
-            json: { user: { company_id: companyId, ...body } },
+            json: { user: { ...body, company_id: companyId } },
             headers: { "x-action-type": "signUp" },
           });
 
@@ -76,14 +76,19 @@ export const authRoutes = (config: ApiConfig) =>
         }
       })
       .post("/logout", async ({ authApi, cookie: { auth_token }, set }) => {
-        await authApi.delete("logout", {
-          headers: { "x-action-type": "logout" },
-        });
-        set.headers["x-action-type"] = "logout";
-        auth_token?.remove();
+        try {
+          await authApi.delete("logout", {
+            headers: { "x-action-type": "logout" },
+          });
+        } catch {
+          // ignore failures
+        } finally {
+          set.headers["x-action-type"] = "logout";
+          auth_token?.remove();
 
-        if (config.hooks?.removeAuthToken) {
-          await config.hooks.removeAuthToken();
+          if (config.hooks?.removeAuthToken) {
+            await config.hooks.removeAuthToken();
+          }
         }
 
         return { success: true };

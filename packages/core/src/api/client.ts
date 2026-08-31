@@ -9,6 +9,9 @@ export interface ServerSideHooks {
   removeAuthToken: () => void | Promise<void>;
 }
 
+/**
+ * Configuration for creating the API client wrapper.
+ */
 export interface ApiClientConfig {
   baseUrl: string;
   companyId?: string | number;
@@ -16,16 +19,41 @@ export interface ApiClientConfig {
   hooks?: ServerSideHooks;
 }
 
+/**
+ * Creates a typed API client instance using Eden Treaty.
+ * 
+ * Configures Ky HTTP client with authentication hooks, retry logic, timeout,
+ * and automatic token management for session persistence. Supports custom
+ * beforeRequest and afterResponse hooks.
+ * 
+ * @param config - Client configuration including baseUrl and optional hooks
+ * @returns Typed API client instance ready for route definitions
+ * 
+ * @example
+ * ```ts
+ * const api = createClient({
+ *   baseUrl: process.env.API_URL!,
+ *   getAuthToken: () => authStore.token,
+ * });
+ * 
+ * // Use with typed routes
+ * const { data } = await api.auth.me.get();
+ * ```
+ */
 export const createClient = (config: ApiClientConfig) => {
   const { baseUrl, kyOptions, hooks } = config;
   const url = new URL(baseUrl);
+
+  const { hooks: customHooks, ...restKyOptions } = kyOptions || {};
 
   const fetcher = ky.create({
     retry: 1,
     timeout: 30000,
     throwHttpErrors: false, // Let Eden Treaty handle errors
     credentials: "include", // Enable cookie support by default
+    ...restKyOptions,
     hooks: {
+      ...customHooks,
       beforeRequest: [
         async ({ request }) => {
           request.headers.set("X-Requested-With", "XMLHttpRequest");
@@ -37,6 +65,7 @@ export const createClient = (config: ApiClientConfig) => {
             }
           }
         },
+        ...(customHooks?.beforeRequest || []),
       ],
       afterResponse: [
         async ({ response }) => {
@@ -56,9 +85,9 @@ export const createClient = (config: ApiClientConfig) => {
             }
           }
         },
+        ...(customHooks?.afterResponse || []),
       ],
     },
-    ...kyOptions,
   });
 
   return treaty<App>(url.host, { fetcher }).api;

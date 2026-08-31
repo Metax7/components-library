@@ -1,6 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { StoneResponse, JewelryResponse, BookmarkResponse } from "../api/types"
 
+/**
+ * Hook to toggle bookmark status for jewelries or stones.
+ * 
+ * Manages optimistic updates and invalidates cache on mutation.
+ * Supports three types: "stone", "jewelry", and "diamond".
+ * 
+ * @param toggleBookmarkAction - Async function that performs the actual bookmark toggle
+ * @returns UseMutation hook from TanStack Query for the bookmark toggle operation
+ */
 export function useToggleBookmark(toggleBookmarkAction: (variables: {
   id: number
   type: "stone" | "jewelry" | "diamond"

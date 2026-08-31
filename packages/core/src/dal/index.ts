@@ -12,33 +12,98 @@ export interface DalDeps {
   cacheTag?: (...tags: string[]) => void;
 }
 
+export type DalResult<T> = T | { data: null; error: string };
+
+/**
+ * Factory function to create a typed DAL (Data Access Layer) with caching support.
+ * 
+ * Provides cached API calls for user session and implements tagging-based cache invalidation.
+ * Wraps fetchers with error handling, automatic retry, and tagged cache lifecycles.
+ * 
+ * @param deps - Object containing api client and optional cache functions
+ * @returns DAL object with typed methods grouped by resource (auth, bookmarks, jewelries, stones, quotes)
+ * 
+ * @example
+ * ```ts
+ * const dal = createDal({ api });
+ * 
+ * const user = await dal.auth.getCurrentUser();
+ * if (user) {
+ *   // Cached for hours, tag invalidates cache
+ *   del.auth.cacheLife("hours");
+ * }
+ * ```
+ */
 export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
+  const getCurrentUser = async () => {
+    if (cacheLife) cacheLife("hours");
+
+    try {
+      const { data: user, error } = await api.auth.me.get();
+      if (error || !user) return null;
+
+      if (cacheTag) {
+        cacheTag(`user-${user.id}`, "users");
+      }
+
+      return user;
+    } catch {
+      return null;
+    }
+  };
+
+  const isAuthenticated = async () => {
+    const user = await getCurrentUser();
+    return !!user;
+  };
+
+  const executeQuery = async <T>(
+    tags: string | string[],
+    fetcher: () => Promise<{ data: T | null; error: any }>,
+  ): Promise<DalResult<T>> => {
+    if (cacheLife) cacheLife("hours");
+    if (cacheTag) {
+      if (Array.isArray(tags)) {
+        cacheTag(...tags);
+      } else {
+        cacheTag(tags);
+      }
+    }
+
+    try {
+      const { data, error } = await fetcher();
+
+      if (error) {
+        console.error(`Error getting ${tags}:`, error.value);
+        const body = error.value as any;
+        return {
+          data: null,
+          error:
+            body?.message ||
+            body?.error ||
+            "Something went wrong. Please try again later.",
+        };
+      }
+
+      return data as T;
+    } catch (error) {
+      console.error(`Error getting ${tags}:`, error);
+      return {
+        data: null,
+        error: "Something went wrong. Please try again later.",
+      };
+    }
+  };
+
   return {
     auth: {
-      getCurrentUser: async () => {
-        if (cacheLife) cacheLife("hours");
-
-        try {
-          const { data: user, error } = await api.auth.me.get();
-          if (error || !user) return null;
-
-          if (cacheTag) {
-            cacheTag(`user-${user.id}`, "users");
-          }
-
-          return user;
-        } catch {
-          return null;
-        }
-      },
-      isAuthenticated: async function () {
-        const user = await this.getCurrentUser();
-        return !!user;
-      },
+      getCurrentUser,
+      isAuthenticated,
     },
 
     bookmarks: {
       findMany: async (params?: BookmarksParams) => {
+        // Bookmarks returns null on error per existing requirement
         if (cacheLife) cacheLife("hours");
         if (cacheTag) cacheTag("bookmarks");
 
@@ -60,100 +125,25 @@ export const createDal = ({ api, cacheLife, cacheTag }: DalDeps) => {
 
     jewelries: {
       findMany: async (params?: JewelriesParams) => {
-        if (cacheLife) cacheLife("hours");
-        if (cacheTag) cacheTag("jewelries");
-
-        try {
-          const { data, error } = await api.jewelries.get({
-            query: params as any,
-          });
-
-          if (error) {
-            console.error("Error getting jewelries:", error.value);
-            const body = error.value as any;
-            return {
-              data: null,
-              error:
-                body?.message ||
-                body?.error ||
-                "Something went wrong. Please try again later.",
-            };
-          }
-
-          return data;
-        } catch (error) {
-          console.error("Error getting jewelries:", error);
-          return {
-            data: null,
-            error: "Something went wrong. Please try again later.",
-          };
-        }
+        return executeQuery("jewelries", () =>
+          api.jewelries.get({ query: params as any }),
+        );
       },
     },
 
     stones: {
       findMany: async (params?: StonesParams) => {
-        if (cacheLife) cacheLife("hours");
-        if (cacheTag) cacheTag("diamonds");
-
-        try {
-          const { data, error } = await api.stones.get({
-            query: params as any,
-          });
-
-          if (error) {
-            console.error("Error getting diamonds:", error.value);
-            const body = error.value as any;
-            return {
-              data: null,
-              error:
-                body?.message ||
-                body?.error ||
-                "Something went wrong. Please try again later.",
-            };
-          }
-
-          return data;
-        } catch (error) {
-          console.error("Error getting diamonds:", error);
-          return {
-            data: null,
-            error: "Something went wrong. Please try again later.",
-          };
-        }
+        return executeQuery(["stones", "diamonds"], () =>
+          api.stones.get({ query: params as any }),
+        );
       },
     },
 
     quotes: {
       findMany: async (params?: QuotesParams) => {
-        if (cacheLife) cacheLife("hours");
-        if (cacheTag) cacheTag("quotes");
-
-        try {
-          const { data, error } = await api.quotes.get({
-            query: params as any,
-          });
-
-          if (error) {
-            console.error("Error getting quotes:", error.value);
-            const body = error.value as any;
-            return {
-              data: null,
-              error:
-                body?.message ||
-                body?.error ||
-                "Something went wrong. Please try again later.",
-            };
-          }
-
-          return data;
-        } catch (error) {
-          console.error("Error getting quotes:", error);
-          return {
-            data: null,
-            error: "Something went wrong. Please try again later.",
-          };
-        }
+        return executeQuery("quotes", () =>
+          api.quotes.get({ query: params as any }),
+        );
       },
     },
   };

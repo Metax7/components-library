@@ -28,8 +28,8 @@ export type DataOptions =
 export interface ResourceReturnMap {
   session: User | null;
   bookmarks: BookmarkResponse | null;
-  jewelries: JewelryResponse | { data: null; error: string };
-  stones: StoneResponse | { data: null; error: string };
+  jewelries: JewelryResponse;
+  stones: StoneResponse;
   properties: JewelryProperties | StoneProperties;
   quotes: QuoteResponse | null;
 }
@@ -40,6 +40,24 @@ export interface UseDataDeps {
   api: ApiClient;
 }
 
+/**
+ * Factory function to create a typed `useQuery` hook for fetching library data.
+ * 
+ * Supports six resource types: session, bookmarks, jewelries, stones, properties, quotes.
+ * Automatically handles query keys, stale time, GC time, and retry logic.
+ * 
+ * @param deps - Object containing the API client instance
+ * @returns Typed `useQuery` hook factory function
+ * 
+ * @example
+ * ```ts
+ * const api = createClient({ baseUrl: process.env.API_URL });
+ * const useData = createUseData({ api });
+ * 
+ * // Fetch jewelries with filters
+ * const { data, isLoading } = useData({ resource: "jewelries", params: {} });
+ * ```
+ */
 export function createUseData(deps: UseDataDeps) {
   const { api } = deps;
 
@@ -70,17 +88,34 @@ export function createUseData(deps: UseDataDeps) {
 
     const queryFn = async (): Promise<InferData<T>> => {
       switch (resource) {
-        case "session":
-          return (await api.auth.me.get()).data as InferData<T>;
+        case "session": {
+          const { data, error } = await api.auth.me.get();
+
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
+
+          return data as InferData<T>;
+        }
 
         case "bookmarks": {
           const { params } = options;
 
-          return (
-            await api.bookmarks.get({
-              query: params,
-            })
-          ).data as InferData<T>;
+          const { data, error } = await api.bookmarks.get({
+            query: params,
+          });
+
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
+
+          return data as InferData<T>;
         }
 
         case "jewelries": {
@@ -90,7 +125,7 @@ export function createUseData(deps: UseDataDeps) {
             query: params,
           });
 
-          if (error) throw new Error(error.value as any);
+          if (error) throw new Error(error.value);
 
           return data as InferData<T>;
         }
@@ -102,7 +137,7 @@ export function createUseData(deps: UseDataDeps) {
             query: params,
           });
 
-          if (error) throw new Error(error.value as any);
+          if (error) throw new Error(error.value);
           return data as InferData<T>;
         }
 
@@ -123,11 +158,18 @@ export function createUseData(deps: UseDataDeps) {
         case "quotes": {
           const { params } = options;
 
-          return (
-            await api.quotes.get({
-              query: params,
-            })
-          ).data as InferData<T>;
+          const { data, error } = await api.quotes.get({
+            query: params,
+          });
+
+          if (error)
+            throw new Error(
+              typeof error.value === "string"
+                ? error.value
+                : JSON.stringify(error.value),
+            );
+
+          return data as InferData<T>;
         }
       }
     };

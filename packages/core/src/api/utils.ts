@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export type RailsError = string | string[] | null;
 
+/**
+ * Strips `undefined` and `null` values from a parameter object.
+ */
 export const cleanParams = (searchParams?: Record<string, unknown>) => {
   return Object.fromEntries(
     Object.entries(searchParams || {}).filter(
@@ -10,7 +11,10 @@ export const cleanParams = (searchParams?: Record<string, unknown>) => {
   ) as Record<string, string | number | boolean>;
 };
 
-export const parseRailsErrors = (data: any): RailsError => {
+/**
+ * Normalizes varied Rails/Devise error payloads into a string or array of strings.
+ */
+export const parseRailsErrors = (data: unknown): RailsError => {
   if (!data) return "An unexpected error occurred";
 
   if (Array.isArray(data.errors || data.error)) {
@@ -36,8 +40,11 @@ export const parseRailsErrors = (data: any): RailsError => {
   return data.message || "Something went wrong";
 };
 
+/**
+ * Sets the authentication token cookie for server-side requests.
+ */
 export const setResponseCookie = (
-  auth_token: any,
+  auth_token: unknown,
   token: string,
   options: { maxAge?: number; path?: string } = {},
 ) => {
